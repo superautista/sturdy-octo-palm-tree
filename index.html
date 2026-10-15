@@ -527,7 +527,8 @@
    CONFIGURAÇÃO
    ============================================================ */
 const CONFIG = {
-  GEMINI_API_KEY: 'AQ.Ab8RN6Ko-jJ6i7FxdNXHFe6owpSWCs7LDF9r-5GMXd7Jtz-3Vw',   // ← Cole sua chave Gemini aqui (opcional)
+  GEMINI_API_KEY: 'AQ.Ab8RN6Ko-jJ6i7FxdNXHFe6owpSWCs7LDF9r-5GMXd7Jtz-3Vw',
+  
   PIX_CHAVE: '48650567851',  // ← Sua chave Pix
   PIX_NOME: 'Angelo Gabriel da Silva',
   PIX_CIDADE: 'SAO PAULO'
@@ -681,7 +682,7 @@ async function chamarGemini(mensagem) {
   }
 
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/' +
-              'gemini-2.0-flash:generateContent?key=' + CONFIG.GEMINI_API_KEY;
+              'gemini-3.8-flash:generateContent?key=' + CONFIG.GEMINI_API_KEY;
 
   const resp = await fetch(url, {
     method: 'POST',
