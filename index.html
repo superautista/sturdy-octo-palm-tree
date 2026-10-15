@@ -662,20 +662,42 @@ async function enviar() {
 
 async function chamarGemini(mensagem) {
   if (!CONFIG.GEMINI_API_KEY) {
-    // Modo simulado
     await new Promise(r => setTimeout(r, 800));
-    return '[Modo simulado] Recebi: "' + mensagem + '".\n\n' +
-           'Para usar a IA real, configure GEMINI_API_KEY no topo do script. ' +
-           'Modo ativo: ' + state.mode + '.';
+    return '[Modo simulado] Recebi: "' + mensagem + '".';
   }
 
+  const maxRetries = 4;
+  let delay = 1000; // 1 segundo inicial
+
+  for (let tentativa = 1; tentativa <= maxRetries; tentativa++) {
+    try {
+      return await chamarGeminiUmaVez(mensagem);
+    } catch (e) {
+      const erro = e.message || '';
+      // Só tenta de novo para erros transitórios (503, 429, 500, 502, 504)
+      const erroTransitorio = erro.includes('503') || erro.includes('429') ||
+                              erro.includes('500') || erro.includes('502') ||
+                              erro.includes('504');
+      
+      if (!erroTransitorio || tentativa === maxRetries) {
+        throw e; // erro permanente ou esgotou tentativas
+      }
+      
+      // Jitter para evitar sobrecarga sincronizada
+      const jitter = Math.random() * 500;
+      console.log(`[Retry ${tentativa}/${maxRetries}] 503 detectado. Aguardando ${(delay+jitter)/1000}s...`);
+      
+      await new Promise(r => setTimeout(r, delay + jitter));
+      delay *= 2; // exponential backoff: 1s → 2s → 4s → 8s
+    }
+  }
+}
+
+async function chamarGeminiUmaVez(mensagem) {
   // Adiciona ao histórico
   state.history.push({ role: 'user', parts: [{ text: mensagem }] });
 
-  const body = {
-    contents: state.history
-  };
-
+  const body = { contents: state.history };
   const instrucao = MODOS[state.mode];
   if (instrucao) {
     body.systemInstruction = { parts: [{ text: instrucao }] };
@@ -700,12 +722,6 @@ async function chamarGemini(mensagem) {
 
   state.history.push({ role: 'model', parts: [{ text: reply }] });
   return reply;
-}
-
-function limparChat() {
-  state.history = [];
-  document.getElementById('chatbox').innerHTML = '';
-  toast('Conversa limpa');
 }
 
 /* ============================================================
