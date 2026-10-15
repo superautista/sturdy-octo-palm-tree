@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Way AI — Assistente Inteligente</title>
+<style>
+  /* ============ RESET E FUNDO ANIMADO ============ */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(-45deg, #0f0f1e, #1a0f2e, #0f1e2e, #1e0f1e);
+    background-size: 400% 400%;
+    animation: bgGradient 15s ease infinite;
+    color: #eee;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  @keyframes bgGradient {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Partículas flutuantes */
+  .particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139,180,255,.6), transparent);
+    animation: float linear infinite;
+  }
+
+  @keyframes float {
+    0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+    10%  { opacity: .7; }
+    90%  { opacity: .7; }
+    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+  }
+
+  /* ============ LAYOUT ============ */
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+
+  .header { text-align: center; margin-bottom: 20px; }
+
+  h1 {
+    font-size: 32px;
+    background: linear-gradient(90deg, #8ab4ff, #a78bfa, #f472b6, #8ab4ff);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shine 4s linear infinite;
+  }
+
+  @keyframes shine { to { background-position: 300% center; } }
+
+  .subtitle { color: #888; font-size: 14px; margin-top: 4px; }
+
+  /* ============ SALDO ============ */
+  .balance {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(22,46,32,.7);
+    border: 1px solid #2a5a3a;
+    padding: 14px 20px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    font-size: 16px;
+  }
+
+  .balance .value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #4ade80;
+  }
+
+  /* ============ TABS ============ */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: rgba(26,26,46,.6);
+    padding: 6px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+  }
+
+  .tab {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    color: #aaa;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .3s;
+  }
+
+  .tab:hover { color: #fff; background: rgba(99,91,255,.2); }
+
+  .tab.active {
+    background: linear-gradient(135deg, #635bff, #8b5cf6);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(99,91,255,.4);
+  }
+
+  /* ============ CARDS ============ */
+  .card {
+    background: rgba(26,26,46,.7);
+    border: 1px solid #2a2a44;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 14px;
+    backdrop-filter: blur(10px);
+    transition: transform .3s, box-shadow .3s;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(99,91,255,.2);
+  }
+
+  /* ============ CHAT ============ */
+  .mode-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .mode-selector label { color: #aaa; font-size: 14px; }
+
+  select {
+    background: rgba(10,10,24,.8);
+    border: 1px solid #333;
+    color: #eee;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    flex: 1;
+  }
+
+  select:focus { outline: none; border-color: #635bff; }
+
+  #chatbox {
+    min-height: 320px;
+    max-height: 480px;
+    overflow-y: auto;
+    background: rgba(10,10,24,.6);
+    border: 1px solid #2a2a44;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .msg {
+    margin: 10px 0;
+    padding: 12px 16px;
+    border-radius: 12px;
+    max-width: 85%;
+    word-wrap: break-word;
+    line-height: 1.5;
+    font-size: 14px;
+    animation: msgIn .3s ease;
+    white-space: pre-wrap;
+  }
+
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .msg.user {
+    background: linear-gradient(135deg, #2a3a5a, #3a4a6a);
+    margin-left: auto;
+    text-align: right;
+  }
+
+  .msg.way {
+    background: rgba(30,30,50,.9);
+    border: 1px solid #2a2a44;
+  }
+
+  .msg.typing {
+    color: #8ab4ff;
+    font-style: italic;
+  }
+
+  .typing::after {
+    content: '...';
+    animation: dots 1.5s steps(4, end) infinite;
+  }
+
+  @keyframes dots {
+    0%, 20% { content: ''; }
+    40%     { content: '.'; }
+    60%     { content: '..'; }
+    80%, 100% { content: '...'; }
+  }
+
+  /* ============ INPUTS ============ */
+  textarea, input[type="text"], input[type="email"] {
+    width: 100%;
+    background: rgba(10,10,24,.8);
+    border: 1px solid #333;
+    color: #eee;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    transition: all .3s;
+  }
+
+  textarea:focus, input:focus {
+    outline: none;
+    border-color: #635bff;
+    box-shadow: 0 0 15px rgba(99,91,255,.3);
+  }
+
+  textarea { min-height: 60px; }
+
+  /* ============ BOTÕES ============ */
+  .btn {
+    background: linear-gradient(135deg, #635bff, #8b5cf6);
+    color: #fff;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .3s;
+    box-shadow: 0 4px 15px rgba(99,91,255,.3);
+  }
+
+  .btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99,91,255,.5);
+  }
+
+  .btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+  }
+
+  .btn.secondary {
+    background: rgba(60,60,80,.8);
+    box-shadow: none;
+  }
+
+  .btn.secondary:hover:not(:disabled) {
+    background: rgba(80,80,100,.9);
+    box-shadow: none;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .btn-row .btn { flex: 1; }
+
+  /* ============ LOJA ============ */
+  .package {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 18px;
+    background: rgba(26,26,46,.7);
+    border: 1px solid #2a2a44;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    transition: all .3s;
+    backdrop-filter: blur(10px);
+  }
+
+  .package:hover {
+    transform: translateY(-2px);
+    border-color: #635bff;
+    box-shadow: 0 8px 25px rgba(99,91,255,.2);
+  }
+
+  .package .info { flex: 1; }
+  .package .name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .package .credits { color: #8ab4ff; font-size: 14px; }
+  .package .price {
+    font-size: 22px;
+    font-weight: 700;
+    color: #4ade80;
+    margin-right: 12px;
+  }
+
+  /* ============ PIX ============ */
+  .pix-container {
+    text-align: center;
+    padding: 24px;
+  }
+
+  .pix-qr {
+    background: #fff;
+    padding: 12px;
+    border-radius: 12px;
+    display: inline-block;
+    box-shadow: 0 8px 30px rgba(99,91,255,.3);
+    margin: 16px 0;
+  }
+
+  .pix-code {
+    background: rgba(10,10,24,.9);
+    padding: 14px;
+    border-radius: 10px;
+    word-break: break-all;
+    font-size: 11px;
+    color: #aaa;
+    font-family: 'Courier New', monospace;
+    text-align: left;
+    margin-top: 12px;
+  }
+
+  .aviso {
+    background: rgba(42,26,26,.8);
+    border: 1px solid #5a2a2a;
+    color: #f0a0a0;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-top: 20px;
+    text-align: left;
+    line-height: 1.5;
+  }
+
+  /* ============ NOTIFICAÇÕES ============ */
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #635bff, #8b5cf6);
+    color: #fff;
+    padding: 14px 22px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 8px 30px rgba(99,91,255,.5);
+    z-index: 100;
+    animation: toastIn .3s ease;
+    max-width: 300px;
+  }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(50px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* ============ UTILITÁRIOS ============ */
+  .hidden { display: none !important; }
+  .center { text-align: center; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: rgba(10,10,24,.5); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb { background: #635bff; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #8b5cf6; }
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="app">
+
+  <div class="header">
+    <h1>🌌 Way AI</h1>
+    <div class="subtitle">Assistente inteligente com múltiplos modos</div>
+  </div>
+
+  <!-- SALDO -->
+  <div class="balance">
+    <div>
+      💰 Créditos: <span class="value" id="credits">50</span>
+      <span id="tierLabel" style="color:#8ab4ff; font-size:13px;"></span>
+    </div>
+    <button class="btn secondary" onclick="comprarCreditos()">+ Comprar</button>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" data-tab="chat" onclick="mudarTab('chat')">💬 Chat</button>
+    <button class="tab" data-tab="loja" onclick="mudarTab('loja')">💳 Loja</button>
+    <button class="tab" data-tab="sobre" onclick="mudarTab('sobre')">ℹ️ Sobre</button>
+  </div>
+
+  <!-- ============ ABA CHAT ============ -->
+  <div id="tab-chat">
+    <div class="card">
+      <div class="mode-selector">
+        <label for="mode">Modo:</label>
+        <select id="mode">
+          <option value="padrao">🧠 Padrão</option>
+          <option value="autista">🧩 Autista</option>
+          <option value="visao">👁️ Visão de Imagens</option>
+          <option value="hiperfoco">🎯 Hiperfoco</option>
+        </select>
+      </div>
+
+      <div id="chatbox"></div>
+
+      <textarea id="input" placeholder="Digite sua mensagem..."></textarea>
+
+      <div class="btn-row">
+        <button class="btn" id="btnEnviar" onclick="enviar()">
+          Enviar (1 crédito)
+        </button>
+        <button class="btn secondary" onclick="limparChat()">Limpar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ABA LOJA ============ -->
+  <div id="tab-loja" class="hidden">
+    <div class="package">
+      <div class="info">
+        <div class="name">Starter</div>
+        <div class="credits">100 créditos</div>
+      </div>
+      <div class="price">R$ 19,90</div>
+      <button class="btn" onclick="comprar(100, 1990, 'Starter')">Comprar</button>
+    </div>
+
+    <div class="package">
+      <div class="info">
+        <div class="name">Pro</div>
+        <div class="credits">550 créditos</div>
+      </div>
+      <div class="price">R$ 89,90</div>
+      <button class="btn" onclick="comprar(550, 8990, 'Pro')">Comprar</button>
+    </div>
+
+    <div class="package">
+      <div class="info">
+        <div class="name">Ultimate</div>
+        <div class="credits">1200 créditos</div>
+      </div>
+      <div class="price">R$ 179,90</div>
+      <button class="btn" onclick="comprar(1200, 17990, 'Ultimate')">Comprar</button>
+    </div>
+  </div>
+
+  <!-- ============ ABA SOBRE ============ -->
+  <div id="tab-sobre" class="hidden">
+    <div class="card">
+      <h2 style="color:#8ab4ff; margin-bottom:12px;">Sobre o Way AI</h2>
+      <p style="color:#bbb; line-height:1.7;">
+        O Way AI é um assistente inteligente com múltiplos modos de conversação,
+        cada um ajustado para um estilo de resposta diferente.
+      </p>
+      <h3 style="color:#a78bfa; margin:16px 0 8px;">Modos disponíveis</h3>
+      <ul style="color:#bbb; line-height:2; padding-left:20px;">
+        <li><b>🧠 Padrão</b> — Resposta equilibrada e natural</li>
+        <li><b>🧩 Autista</b> — Direto, literal, sem metáforas</li>
+        <li><b>👁️ Visão de Imagens</b> — Descritivo e sensorial</li>
+        <li><b>🎯 Hiperfoco</b> — Profundidade em um único tema</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ MODAL PIX ============ -->
+<div id="modalPix" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#1a1a2e;border:1px solid #2a2a44;border-radius:16px;padding:24px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h2 style="color:#8ab4ff;font-size:20px;">💳 Pagamento Pix</h2>
+      <button onclick="fecharModalPix()" style="background:none;border:none;color:#888;font-size:24px;cursor:pointer;">×</button>
+    </div>
+
+    <div id="pixInfo" class="card" style="margin-bottom:16px;">
+      <p><b>Pacote:</b> <span id="pixPacote">—</span></p>
+      <p><b>Créditos:</b> <span id="pixCreditos">—</span></p>
+      <p><b>Valor:</b> <span id="pixValor">—</span></p>
+    </div>
+
+    <div class="pix-container">
+      <p style="color:#aaa;font-size:14px;">Escaneie o QR Code:</p>
+      <div class="pix-qr">
+        <canvas id="qrCanvas" width="280" height="280"></canvas>
+      </div>
+
+      <p style="color:#aaa;font-size:14px;margin-top:16px;">Ou copie o código:</p>
+      <div class="pix-code" id="pixCode">—</div>
+
+      <button class="btn" onclick="copiarPix()" style="margin-top:14px;">📋 Copiar código Pix</button>
+    </div>
+
+    <div class="aviso">
+      ⚠️ Após pagar, seus créditos serão liberados quando o administrador
+      confirmar o recebimento. Guarde o comprovante.
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIGURAÇÃO
+   ============================================================ */
+const CONFIG = {
+  GEMINI_API_KEY: 'AQ.Ab8RN6Ko-jJ6i7FxdNXHFe6owpSWCs7LDF9r-5GMXd7Jtz-3Vw',   // ← Cole sua chave Gemini aqui (opcional)
+  PIX_CHAVE: '48650567851',  // ← Sua chave Pix
+  PIX_NOME: 'Angelo Gabriel da Silva',
+  PIX_CIDADE: 'SAO PAULO'
+};
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const state = {
+  credits: 50,
+  tier: 'free',
+  history: [],
+  mode: 'padrao'
+};
+
+/* ============================================================
+   INSTRUÇÕES DOS MODOS
+   ============================================================ */
+const MODOS = {
+  padrao: '',
+  autista:
+    'Você é um assistente com comunicação direta, literal e objetiva. ' +
+    'Evite metáforas, sarcasmo ou ambiguidade. Use frases curtas e estruturadas. ' +
+    'Organize em listas quando possível. Diga claramente o que sabe e o que não sabe.',
+  visao:
+    'Você é especialista em análise visual. Interprete todo texto como descrição ' +
+    'de uma imagem. Descreva cenas com detalhes sensoriais: cores, formas, luz, composição.',
+  hiperfoco:
+    'Você entra em hiperfoco absoluto no tema. Explore cada ângulo em profundidade. ' +
+    'Não mude de assunto. Se o usuário desviar, retorne ao tema central.'
+};
+
+/* ============================================================
+   PARTÍCULAS DE FUNDO
+   ============================================================ */
+function criarParticulas() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 8 + 2;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    container.appendChild(p);
+  }
+}
+
+/* ============================================================
+   NAVEGAÇÃO DE TABS
+   ============================================================ */
+function mudarTab(nome) {
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === nome);
+  });
+  document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
+  document.getElementById('tab-' + nome).classList.remove('hidden');
+}
+
+/* ============================================================
+   ATUALIZAR UI
+   ============================================================ */
+function atualizarSaldo() {
+  document.getElementById('credits').textContent = state.credits;
+  document.getElementById('tierLabel').textContent = '(' + state.tier + ')';
+}
+
+/* ============================================================
+   TOAST (notificação)
+   ============================================================ */
+function toast(msg, duracao = 3000) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), duracao);
+}
+
+/* ============================================================
+   CHAT
+   ============================================================ */
+function adicionarMensagem(tipo, texto) {
+  const box = document.getElementById('chatbox');
+  const div = document.createElement('div');
+  div.className = 'msg ' + tipo;
+  div.textContent = (tipo === 'user' ? 'Você: ' : 'Way: ') + texto;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  return div;
+}
+
+async function enviar() {
+  const input = document.getElementById('input');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  if (state.credits < 1) {
+    toast('Créditos insuficientes! Compre mais na Loja.');
+    mudarTab('loja');
+    return;
+  }
+
+  // Debita crédito
+  state.credits -= 1;
+  atualizarSaldo();
+
+  // Adiciona mensagem do usuário
+  adicionarMensagem('user', msg);
+  input.value = '';
+  document.getElementById('btnEnviar').disabled = true;
+
+  // Indicador "digitando"
+  const typing = adicionarMensagem('way', '');
+  typing.classList.add('typing');
+
+  try {
+    const resposta = await chamarGemini(msg);
+    typing.remove();
+    adicionarMensagem('way', resposta);
+  } catch (e) {
+    typing.remove();
+    adicionarMensagem('way', '[Erro] ' + e.message);
+    state.credits += 1; // devolve crédito
+    atualizarSaldo();
+  }
+
+  document.getElementById('btnEnviar').disabled = false;
+}
+
+async function chamarGemini(mensagem) {
+  if (!CONFIG.GEMINI_API_KEY) {
+    // Modo simulado
+    await new Promise(r => setTimeout(r, 800));
+    return '[Modo simulado] Recebi: "' + mensagem + '".\n\n' +
+           'Para usar a IA real, configure GEMINI_API_KEY no topo do script. ' +
+           'Modo ativo: ' + state.mode + '.';
+  }
+
+  // Adiciona ao histórico
+  state.history.push({ role: 'user', parts: [{ text: mensagem }] });
+
+  const body = {
+    contents: state.history
+  };
+
+  const instrucao = MODOS[state.mode];
+  if (instrucao) {
+    body.systemInstruction = { parts: [{ text: instrucao }] };
+  }
+
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' +
+              'gemini-2.0-flash:generateContent?key=' + CONFIG.GEMINI_API_KEY;
+
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!resp.ok) {
+    const erro = await resp.text();
+    throw new Error('API ' + resp.status + ': ' + erro.substring(0, 200));
+  }
+
+  const data = await resp.json();
+  const reply = data.candidates[0].content.parts[0].text;
+
+  state.history.push({ role: 'model', parts: [{ text: reply }] });
+  return reply;
+}
+
+function limparChat() {
+  state.history = [];
+  document.getElementById('chatbox').innerHTML = '';
+  toast('Conversa limpa');
+}
+
+/* ============================================================
+   LOJA E PIX
+   ============================================================ */
+function comprarCreditos() {
+  mudarTab('loja');
+}
+
+function comprar(creditos, valorCents, nome) {
+  const valor = (valorCents / 100).toFixed(2).replace('.', ',');
+
+  document.getElementById('pixPacote').textContent = nome;
+  document.getElementById('pixCreditos').textContent = creditos;
+  document.getElementById('pixValor').textContent = 'R$ ' + valor;
+
+  // Gera BR Code Pix
+  const brCode = gerarBrCodePix(creditos, valorCents);
+
+  document.getElementById('pixCode').textContent = brCode;
+
+  // Gera QR Code visual
+  desenharQrCode(brCode);
+
+  document.getElementById('modalPix').classList.remove('hidden');
+}
+
+function fecharModalPix() {
+  document.getElementById('modalPix').classList.add('hidden');
+}
+
+function copiarPix() {
+  const code = document.getElementById('pixCode').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    toast('Código Pix copiado!');
+  });
+}
+
+/* ============================================================
+   BR CODE PIX (padrão EMV)
+   ============================================================ */
+function gerarBrCodePix(creditos, valorCents) {
+  const chave = CONFIG.PIX_CHAVE;
+  const nome  = CONFIG.PIX_NOME.substring(0, 25);
+  const cidade = CONFIG.PIX_CIDADE.substring(0, 15);
+  const valor = (valorCents / 100).toFixed(2);
+  const txid = 'WAY' + Date.now().toString().slice(-10);
+
+  const gui = '0014br.gov.bcb.pix';
+  const chaveStr = '01' + String(chave.length).padStart(2, '0') + chave;
+  const merchantAccount = gui + chaveStr;
+  const id26 = '26' + String(merchantAccount.length).padStart(2, '0') + merchantAccount;
+
+  const id52 = '52040000';
+  const id53 = '5303986';
+  const id54 = '54' + String(valor.length).padStart(2, '0') + valor;
+  const id58 = '5802BR';
+  const id59 = '59' + String(nome.length).padStart(2, '0') + nome;
+  const id60 = '60' + String(cidade.length).padStart(2, '0') + cidade;
+
+  const txidField = '05' + String(txid.length).padStart(2, '0') + txid;
+  const id62 = '62' + String(txidField.length).padStart(2, '0') + txidField;
+
+  const payload = '000201' + id26 + id52 + id53 + id54 + id58 + id59 + id60 + id62 + '6304';
+
+  return payload + crc16(payload);
+}
+
+function crc16(payload) {
+  let crc = 0xFFFF;
+  const poly = 0x1021;
+  const bytes = new TextEncoder().encode(payload);
+
+  for (const b of bytes) {
+    for (let i = 0; i < 8; i++) {
+      const bit = ((b >> (7 - i)) & 1) === 1;
+      const c15 = ((crc >> 15) & 1) === 1;
+      crc <<= 1;
+      if (c15 !== bit) crc ^= poly;
+    }
+  }
+  return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+}
+
+/* ============================================================
+   QR CODE SIMPLES (desenho via canvas)
+   Nota: sem dependências externas, mas o QR "funcional" requer
+   uma lib como qrcode.js. Aqui geramos um placeholder visual.
+   ============================================================ */
+function desenharQrCode(texto) {
+  const canvas = document.getElementById('qrCanvas');
+  const ctx = canvas.getContext('2d');
+  const size = 280;
+  const cells = 33;
+  const cellSize = size / cells;
+
+  // Fundo branco
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, size, size);
+
+  // Gera "hash" visual do texto para padrão determinístico
+  let hash = 0;
+  for (let i = 0; i < texto.length; i++) {
+    hash = ((hash << 5) - hash + texto.charCodeAt(i)) | 0;
+  }
+
+  // Preto
+  ctx.fillStyle = '#000';
+
+  // Marcadores de posição (cantos)
+  const desenharMarcador = (x, y) => {
+    ctx.fillRect(x, y, 7 * cellSize, 7 * cellSize);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(x + cellSize, y + cellSize, 5 * cellSize, 5 * cellSize);
+    ctx.fillStyle = '#000';
+    ctx.fillRect(x + 2 * cellSize, y + 2 * cellSize, 3 * cellSize, 3 * cellSize);
+  };
+
+  desenharMarcador(0, 0);
+  desenharMarcador((cells - 7) * cellSize, 0);
+  desenharMarcador(0, (cells - 7) * cellSize);
+
+  // Padrão pseudo-aleatório nas áreas restantes
+  for (let x = 0; x < cells; x++) {
+    for (let y = 0; y < cells; y++) {
+      // Pula áreas dos marcadores
+      if ((x < 8 && y < 8) ||
+          (x >= cells - 8 && y < 8) ||
+          (x < 8 && y >= cells - 8)) continue;
+
+      // Pseudo-aleatório baseado no hash + posição
+      const val = (hash * (x + 1) * (y + 1) + x * 31 + y * 17) % 100;
+      if (val < 45) {
+        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+      }
+    }
+  }
+
+  // Aviso no rodapé do canvas
+  ctx.fillStyle = '#888';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('⚠️ QR visual — use a lib qrcode.js para QR real', size / 2, size - 4);
+}
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  criarParticulas();
+  atualizarSaldo();
+
+  // Enter para enviar
+  document.getElementById('input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      enviar();
+    }
+  });
+
+  // Atualiza modo ao trocar o select
+  document.getElementById('mode').addEventListener('change', (e) => {
+    state.mode = e.target.value;
+    toast('Modo: ' + e.target.options[e.target.selectedIndex].text);
+  });
+
+  // Mensagem de boas-vindas
+  adicionarMensagem('way',
+    'Olá! Sou o Way AI. Escolha um modo e comece a conversar.\n' +
+    'Você tem ' + state.credits + ' créditos grátis para testar.'
+  );
+});
+// Salvar
+localStorage.setItem('way_state', JSON.stringify({
+  credits: state.credits,
+  history: state.history
+}));
+
+// Carregar
+const salvo = localStorage.getItem('way_state');
+if (salvo) {
+  const dados = JSON.parse(salvo);
+  state.credits = dados.credits;
+  state.history = dados.history;
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</body>
+</html>
