@@ -1,913 +1,538 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Way AI — Assistente Inteligente</title>
-<style>
-  /* ============ RESET E FUNDO ANIMADO ============ */
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Street Partners - Espaço Relax</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(-45deg, #0f0f1e, #1a0f2e, #0f1e2e, #1e0f1e);
-    background-size: 400% 400%;
-    animation: bgGradient 15s ease infinite;
-    color: #eee;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+        body {
+            background: linear-gradient(145deg, #0b0e1a, #1a1f2f);
+            color: #f0f3fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
 
-  @keyframes bgGradient {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+        header {
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
 
-  /* Partículas flutuantes */
-  .particles {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-  }
+        header h1 {
+            color: #f7c948;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
 
-  .particle {
-    position: absolute;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(139,180,255,.6), transparent);
-    animation: float linear infinite;
-  }
+        header p {
+            color: #a8b5d9;
+            font-size: 0.8rem;
+        }
 
-  @keyframes float {
-    0%   { transform: translateY(100vh) scale(0); opacity: 0; }
-    10%  { opacity: .7; }
-    90%  { opacity: .7; }
-    100% { transform: translateY(-100px) scale(1); opacity: 0; }
-  }
+        .menu {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0 10px;
+        }
 
-  /* ============ LAYOUT ============ */
-  .app {
-    position: relative;
-    z-index: 1;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 24px 20px;
-  }
+        .btn-jogo {
+            padding: 10px 18px;
+            border-radius: 30px;
+            border: 2px solid rgba(247, 201, 72, 0.3);
+            background: transparent;
+            color: #f7c948;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
 
-  .header { text-align: center; margin-bottom: 20px; }
+        .btn-jogo:hover, .btn-jogo.ativo {
+            background: #f7c948;
+            color: #0b0e1a;
+            border-color: #f7c948;
+            box-shadow: 0 0 15px rgba(247, 201, 72, 0.4);
+        }
 
-  h1 {
-    font-size: 32px;
-    background: linear-gradient(90deg, #8ab4ff, #a78bfa, #f472b6, #8ab4ff);
-    background-size: 300% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shine 4s linear infinite;
-  }
+        .area-jogo {
+            width: 95%;
+            max-width: 800px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            display: none;
+        }
 
-  @keyframes shine { to { background-position: 300% center; } }
+        .area-jogo.ativo {
+            display: block;
+        }
 
-  .subtitle { color: #888; font-size: 14px; margin-top: 4px; }
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            touch-action: none;
+        }
 
-  /* ============ SALDO ============ */
-  .balance {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(22,46,32,.7);
-    border: 1px solid #2a5a3a;
-    padding: 14px 20px;
-    border-radius: 14px;
-    margin-bottom: 20px;
-    backdrop-filter: blur(10px);
-    font-size: 16px;
-  }
+        .respira-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: #0b0e1a;
+            z-index: 10;
+        }
 
-  .balance .value {
-    font-size: 22px;
-    font-weight: 700;
-    color: #4ade80;
-  }
+        .circulo-respira {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #4fc3f7, #1a5f8a);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 40px rgba(79, 195, 247, 0.3);
+            transition: transform 4s ease-in-out;
+        }
 
-  /* ============ TABS ============ */
-  .tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    background: rgba(26,26,46,.6);
-    padding: 6px;
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
-  }
+        .texto-respira {
+            margin-top: 40px;
+            font-size: 1.5rem;
+            color: #f0f3fa;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
 
-  .tab {
-    flex: 1;
-    padding: 12px;
-    background: transparent;
-    border: none;
-    color: #aaa;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all .3s;
-  }
+        /* Estilos para Sons da Natureza */
+        .sons-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 20px;
+        }
 
-  .tab:hover { color: #fff; background: rgba(99,91,255,.2); }
+        .btn-som {
+            width: 120px;
+            height: 120px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 2.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: 0.3s;
+        }
 
-  .tab.active {
-    background: linear-gradient(135deg, #635bff, #8b5cf6);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(99,91,255,.4);
-  }
+        .btn-som span {
+            font-size: 0.8rem;
+            margin-top: 10px;
+            color: #a8b5d9;
+        }
 
-  /* ============ CARDS ============ */
-  .card {
-    background: rgba(26,26,46,.7);
-    border: 1px solid #2a2a44;
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 14px;
-    backdrop-filter: blur(10px);
-    transition: transform .3s, box-shadow .3s;
-  }
+        .btn-som.ativo {
+            background: rgba(79, 195, 247, 0.2);
+            border-color: #4fc3f7;
+            box-shadow: 0 0 20px rgba(79, 195, 247, 0.4);
+        }
 
-  .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(99,91,255,.2);
-  }
-
-  /* ============ CHAT ============ */
-  .mode-selector {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .mode-selector label { color: #aaa; font-size: 14px; }
-
-  select {
-    background: rgba(10,10,24,.8);
-    border: 1px solid #333;
-    color: #eee;
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-    flex: 1;
-  }
-
-  select:focus { outline: none; border-color: #635bff; }
-
-  #chatbox {
-    min-height: 320px;
-    max-height: 480px;
-    overflow-y: auto;
-    background: rgba(10,10,24,.6);
-    border: 1px solid #2a2a44;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 12px;
-  }
-
-  .msg {
-    margin: 10px 0;
-    padding: 12px 16px;
-    border-radius: 12px;
-    max-width: 85%;
-    word-wrap: break-word;
-    line-height: 1.5;
-    font-size: 14px;
-    animation: msgIn .3s ease;
-    white-space: pre-wrap;
-  }
-
-  @keyframes msgIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: none; }
-  }
-
-  .msg.user {
-    background: linear-gradient(135deg, #2a3a5a, #3a4a6a);
-    margin-left: auto;
-    text-align: right;
-  }
-
-  .msg.way {
-    background: rgba(30,30,50,.9);
-    border: 1px solid #2a2a44;
-  }
-
-  .msg.typing {
-    color: #8ab4ff;
-    font-style: italic;
-  }
-
-  .typing::after {
-    content: '...';
-    animation: dots 1.5s steps(4, end) infinite;
-  }
-
-  @keyframes dots {
-    0%, 20% { content: ''; }
-    40%     { content: '.'; }
-    60%     { content: '..'; }
-    80%, 100% { content: '...'; }
-  }
-
-  /* ============ INPUTS ============ */
-  textarea, input[type="text"], input[type="email"] {
-    width: 100%;
-    background: rgba(10,10,24,.8);
-    border: 1px solid #333;
-    color: #eee;
-    padding: 12px 16px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-family: inherit;
-    resize: vertical;
-    transition: all .3s;
-  }
-
-  textarea:focus, input:focus {
-    outline: none;
-    border-color: #635bff;
-    box-shadow: 0 0 15px rgba(99,91,255,.3);
-  }
-
-  textarea { min-height: 60px; }
-
-  /* ============ BOTÕES ============ */
-  .btn {
-    background: linear-gradient(135deg, #635bff, #8b5cf6);
-    color: #fff;
-    border: none;
-    padding: 12px 22px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .3s;
-    box-shadow: 0 4px 15px rgba(99,91,255,.3);
-  }
-
-  .btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(99,91,255,.5);
-  }
-
-  .btn:disabled {
-    opacity: .5;
-    cursor: not-allowed;
-  }
-
-  .btn.secondary {
-    background: rgba(60,60,80,.8);
-    box-shadow: none;
-  }
-
-  .btn.secondary:hover:not(:disabled) {
-    background: rgba(80,80,100,.9);
-    box-shadow: none;
-  }
-
-  .btn-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-  }
-
-  .btn-row .btn { flex: 1; }
-
-  /* ============ LOJA ============ */
-  .package {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    padding: 18px;
-    background: rgba(26,26,46,.7);
-    border: 1px solid #2a2a44;
-    border-radius: 14px;
-    margin-bottom: 12px;
-    transition: all .3s;
-    backdrop-filter: blur(10px);
-  }
-
-  .package:hover {
-    transform: translateY(-2px);
-    border-color: #635bff;
-    box-shadow: 0 8px 25px rgba(99,91,255,.2);
-  }
-
-  .package .info { flex: 1; }
-  .package .name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-  .package .credits { color: #8ab4ff; font-size: 14px; }
-  .package .price {
-    font-size: 22px;
-    font-weight: 700;
-    color: #4ade80;
-    margin-right: 12px;
-  }
-
-  /* ============ PIX ============ */
-  .pix-container {
-    text-align: center;
-    padding: 24px;
-  }
-
-  .pix-qr {
-    background: #fff;
-    padding: 12px;
-    border-radius: 12px;
-    display: inline-block;
-    box-shadow: 0 8px 30px rgba(99,91,255,.3);
-    margin: 16px 0;
-  }
-
-  .pix-code {
-    background: rgba(10,10,24,.9);
-    padding: 14px;
-    border-radius: 10px;
-    word-break: break-all;
-    font-size: 11px;
-    color: #aaa;
-    font-family: 'Courier New', monospace;
-    text-align: left;
-    margin-top: 12px;
-  }
-
-  .aviso {
-    background: rgba(42,26,26,.8);
-    border: 1px solid #5a2a2a;
-    color: #f0a0a0;
-    padding: 14px;
-    border-radius: 10px;
-    font-size: 13px;
-    margin-top: 20px;
-    text-align: left;
-    line-height: 1.5;
-  }
-
-  /* ============ NOTIFICAÇÕES ============ */
-  .toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #635bff, #8b5cf6);
-    color: #fff;
-    padding: 14px 22px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    box-shadow: 0 8px 30px rgba(99,91,255,.5);
-    z-index: 100;
-    animation: toastIn .3s ease;
-    max-width: 300px;
-  }
-
-  @keyframes toastIn {
-    from { opacity: 0; transform: translateX(50px); }
-    to   { opacity: 1; transform: none; }
-  }
-
-  /* ============ UTILITÁRIOS ============ */
-  .hidden { display: none !important; }
-  .center { text-align: center; }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: rgba(10,10,24,.5); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb { background: #635bff; border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: #8b5cf6; }
-</style>
+        footer {
+            margin-top: auto;
+            padding: 15px;
+            font-size: 0.8rem;
+            color: #6b7699;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 
-<div class="particles" id="particles"></div>
+    <header>
+        <h1>🧩 Street Partners</h1>
+        <p>Regule seus sentidos e respire</p>
+    </header>
 
-<div class="app">
-
-  <div class="header">
-    <h1>🌌 Way AI</h1>
-    <div class="subtitle">Assistente inteligente com múltiplos modos</div>
-  </div>
-
-  <!-- SALDO -->
-  <div class="balance">
-    <div>
-      💰 Créditos: <span class="value" id="credits">50</span>
-      <span id="tierLabel" style="color:#8ab4ff; font-size:13px;"></span>
-    </div>
-    <button class="btn secondary" onclick="comprarCreditos()">+ Comprar</button>
-  </div>
-
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tab active" data-tab="chat" onclick="mudarTab('chat')">💬 Chat</button>
-    <button class="tab" data-tab="loja" onclick="mudarTab('loja')">💳 Loja</button>
-    <button class="tab" data-tab="sobre" onclick="mudarTab('sobre')">ℹ️ Sobre</button>
-  </div>
-
-  <!-- ============ ABA CHAT ============ -->
-  <div id="tab-chat">
-    <div class="card">
-      <div class="mode-selector">
-        <label for="mode">Modo:</label>
-        <select id="mode">
-          <option value="padrao">🧠 Padrão</option>
-          <option value="autista">🧩 Autista</option>
-          <option value="visao">👁️ Visão de Imagens</option>
-          <option value="hiperfoco">🎯 Hiperfoco</option>
-        </select>
-      </div>
-
-      <div id="chatbox"></div>
-
-      <textarea id="input" placeholder="Digite sua mensagem..."></textarea>
-
-      <div class="btn-row">
-        <button class="btn" id="btnEnviar" onclick="enviar()">
-          Enviar (1 crédito)
-        </button>
-        <button class="btn secondary" onclick="limparChat()">Limpar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ ABA LOJA ============ -->
-  <div id="tab-loja" class="hidden">
-    <div class="package">
-      <div class="info">
-        <div class="name">Starter</div>
-        <div class="credits">100 créditos</div>
-      </div>
-      <div class="price">R$ 19,90</div>
-      <button class="btn" onclick="comprar(100, 1990, 'Starter')">Comprar</button>
+    <div class="menu">
+        <button class="btn-jogo ativo" onclick="mudarJogo('bolhas', this)">🫧 Bolhas</button>
+        <button class="btn-jogo" onclick="mudarJogo('respiracao', this)">🧘 Respiração</button>
+        <button class="btn-jogo" onclick="mudarJogo('pintura', this)">🎨 Pintura</button>
+        <button class="btn-jogo" onclick="mudarJogo('jardim', this)">🌻 Jardim Zen</button>
+        <button class="btn-jogo" onclick="mudarJogo('estrelas', this)">✨ Estrelas</button>
+        <button class="btn-jogo" onclick="mudarJogo('sons', this)">🎵 Sons</button>
     </div>
 
-    <div class="package">
-      <div class="info">
-        <div class="name">Pro</div>
-        <div class="credits">550 créditos</div>
-      </div>
-      <div class="price">R$ 89,90</div>
-      <button class="btn" onclick="comprar(550, 8990, 'Pro')">Comprar</button>
+    <div class="area-jogo ativo" id="jogo-bolhas"><canvas id="canvasBolhas"></canvas></div>
+    
+    <div class="area-jogo" id="jogo-respiracao">
+        <div class="respira-container">
+            <div class="circulo-respira" id="circulo"></div>
+            <div class="texto-respira" id="textoRespira">Inspire...</div>
+        </div>
     </div>
 
-    <div class="package">
-      <div class="info">
-        <div class="name">Ultimate</div>
-        <div class="credits">1200 créditos</div>
-      </div>
-      <div class="price">R$ 179,90</div>
-      <button class="btn" onclick="comprar(1200, 17990, 'Ultimate')">Comprar</button>
-    </div>
-  </div>
+    <div class="area-jogo" id="jogo-pintura"><canvas id="canvasPintura"></canvas></div>
+    
+    <div class="area-jogo" id="jogo-jardim"><canvas id="canvasJardim"></canvas></div>
+    
+    <div class="area-jogo" id="jogo-estrelas"><canvas id="canvasEstrelas"></canvas></div>
 
-  <!-- ============ ABA SOBRE ============ -->
-  <div id="tab-sobre" class="hidden">
-    <div class="card">
-      <h2 style="color:#8ab4ff; margin-bottom:12px;">Sobre o Way AI</h2>
-      <p style="color:#bbb; line-height:1.7;">
-        O Way AI é um assistente inteligente com múltiplos modos de conversação,
-        cada um ajustado para um estilo de resposta diferente.
-      </p>
-      <h3 style="color:#a78bfa; margin:16px 0 8px;">Modos disponíveis</h3>
-      <ul style="color:#bbb; line-height:2; padding-left:20px;">
-        <li><b>🧠 Padrão</b> — Resposta equilibrada e natural</li>
-        <li><b>🧩 Autista</b> — Direto, literal, sem metáforas</li>
-        <li><b>👁️ Visão de Imagens</b> — Descritivo e sensorial</li>
-        <li><b>🎯 Hiperfoco</b> — Profundidade em um único tema</li>
-      </ul>
-    </div>
-  </div>
-
-</div>
-
-<!-- ============ MODAL PIX ============ -->
-<div id="modalPix" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#1a1a2e;border:1px solid #2a2a44;border-radius:16px;padding:24px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <h2 style="color:#8ab4ff;font-size:20px;">💳 Pagamento Pix</h2>
-      <button onclick="fecharModalPix()" style="background:none;border:none;color:#888;font-size:24px;cursor:pointer;">×</button>
+    <div class="area-jogo" id="jogo-sons">
+        <div class="sons-container">
+            <button class="btn-som" onclick="toggleSom('chuva', this)">🌧️<span>Chuva</span></button>
+            <button class="btn-som" onclick="toggleSom('mar', this)">🌊<span>Mar</span></button>
+            <button class="btn-som" onclick="toggleSom('floresta', this)">🌲<span>Floresta</span></button>
+            <button class="btn-som" onclick="toggleSom('ruido', this)">📻<span>Ruído Branco</span></button>
+        </div>
     </div>
 
-    <div id="pixInfo" class="card" style="margin-bottom:16px;">
-      <p><b>Pacote:</b> <span id="pixPacote">—</span></p>
-      <p><b>Créditos:</b> <span id="pixCreditos">—</span></p>
-      <p><b>Valor:</b> <span id="pixValor">—</span></p>
-    </div>
+    <footer>A luta é em equipe. Você está seguro. 💙</footer>
 
-    <div class="pix-container">
-      <p style="color:#aaa;font-size:14px;">Escaneie o QR Code:</p>
-      <div class="pix-qr">
-        <canvas id="qrCanvas" width="280" height="280"></canvas>
-      </div>
+    <script>
+        let jogoAtual = 'bolhas';
 
-      <p style="color:#aaa;font-size:14px;margin-top:16px;">Ou copie o código:</p>
-      <div class="pix-code" id="pixCode">—</div>
+        function mudarJogo(jogo, btn) {
+            jogoAtual = jogo;
+            document.querySelectorAll('.btn-jogo').forEach(b => b.classList.remove('ativo'));
+            btn.classList.add('ativo');
 
-      <button class="btn" onclick="copiarPix()" style="margin-top:14px;">📋 Copiar código Pix</button>
-    </div>
+            document.querySelectorAll('.area-jogo').forEach(area => area.classList.remove('ativo'));
+            document.getElementById('jogo-' + jogo).classList.add('ativo');
 
-    <div class="aviso">
-      ⚠️ Após pagar, seus créditos serão liberados quando o administrador
-      confirmar o recebimento. Guarde o comprovante.
-    </div>
-  </div>
-</div>
+            if (jogo === 'bolhas') iniciarBolhas();
+            if (jogo === 'respiracao') iniciarRespiracao();
+            if (jogo === 'pintura') iniciarPintura();
+            if (jogo === 'jardim') iniciarJardim();
+            if (jogo === 'estrelas') iniciarEstrelas();
+            if (jogo === 'sons') pararTodosSons(); // Para os sons se mudar de tela
+        }
 
-<script>
-/* ============================================================
-   CONFIGURAÇÃO
-   ============================================================ */
-const CONFIG = {
-  GEMINI_API_KEY:'AQ.Ab8RN6J2iaCoemuJK3FZE8zrGaGrjV4S6uZE6WRMd8uJrHZuVQ',
-  
-  PIX_CHAVE: '48650567851',  // ← Sua chave Pix
-  PIX_NOME: 'Angelo Gabriel da Silva',
-  PIX_CIDADE: 'SAO PAULO'
-};
+        // ==========================================
+        // 1. BOLHAS SENSORIAIS
+        // ==========================================
+        const canvasBolhas = document.getElementById('canvasBolhas');
+        const ctxBolhas = canvasBolhas.getContext('2d');
+        let bolhas = [];
+        let animBolhas;
 
-/* ============================================================
-   ESTADO
-   ============================================================ */
-const state = {
-  credits: 50,
-  tier: 'free',
-  history: [],
-  mode: 'padrao'
-};
+        function iniciarBolhas() {
+            canvasBolhas.width = canvasBolhas.parentElement.clientWidth;
+            canvasBolhas.height = canvasBolhas.parentElement.clientHeight;
+            bolhas = [];
+            cancelAnimationFrame(animBolhas);
+            loopBolhas();
+        }
 
-/* ============================================================
-   INSTRUÇÕES DOS MODOS
-   ============================================================ */
-const MODOS = {
-  padrao: '',
-  autista:
-    'Você é um assistente com comunicação direta, literal e objetiva. ' +
-    'Evite metáforas, sarcasmo ou ambiguidade. Use frases curtas e estruturadas. ' +
-    'Organize em listas quando possível. Diga claramente o que sabe e o que não sabe.',
-  visao:
-    'Você é especialista em análise visual. Interprete todo texto como descrição ' +
-    'de uma imagem. Descreva cenas com detalhes sensoriais: cores, formas, luz, composição.',
-  hiperfoco:
-    'Você entra em hiperfoco absoluto no tema. Explore cada ângulo em profundidade. ' +
-    'Não mude de assunto. Se o usuário desviar, retorne ao tema central.'
-};
+        function criarBolha() {
+            bolhas.push({
+                x: Math.random() * canvasBolhas.width,
+                y: canvasBolhas.height + 50,
+                raio: Math.random() * 30 + 10,
+                velocidade: Math.random() * 1.5 + 0.5,
+                cor: `hsla(${Math.random() * 360}, 60%, 60%, 0.4)`
+            });
+        }
 
-/* ============================================================
-   PARTÍCULAS DE FUNDO
-   ============================================================ */
-function criarParticulas() {
-  const container = document.getElementById('particles');
-  for (let i = 0; i < 30; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const size = Math.random() * 8 + 2;
-    p.style.width = size + 'px';
-    p.style.height = size + 'px';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDuration = (Math.random() * 15 + 10) + 's';
-    p.style.animationDelay = (Math.random() * 10) + 's';
-    container.appendChild(p);
-  }
-}
+        function loopBolhas() {
+            if (jogoAtual !== 'bolhas') return;
+            ctxBolhas.clearRect(0, 0, canvasBolhas.width, canvasBolhas.height);
+            if (Math.random() < 0.04) criarBolha();
 
-/* ============================================================
-   NAVEGAÇÃO DE TABS
-   ============================================================ */
-function mudarTab(nome) {
-  document.querySelectorAll('.tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.tab === nome);
-  });
-  document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
-  document.getElementById('tab-' + nome).classList.remove('hidden');
-}
+            for (let i = bolhas.length - 1; i >= 0; i--) {
+                let b = bolhas[i];
+                b.y -= b.velocidade;
+                ctxBolhas.beginPath();
+                ctxBolhas.arc(b.x, b.y, b.raio, 0, Math.PI * 2);
+                ctxBolhas.fillStyle = b.cor;
+                ctxBolhas.fill();
+                if (b.y < -50) bolhas.splice(i, 1);
+            }
+            animBolhas = requestAnimationFrame(loopBolhas);
+        }
 
-/* ============================================================
-   ATUALIZAR UI
-   ============================================================ */
-function atualizarSaldo() {
-  document.getElementById('credits').textContent = state.credits;
-  document.getElementById('tierLabel').textContent = '(' + state.tier + ')';
-}
+        function tocarBolha(e) {
+            if (jogoAtual !== 'bolhas') return;
+            let rect = canvasBolhas.getBoundingClientRect();
+            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+            for (let i = bolhas.length - 1; i >= 0; i--) {
+                let b = bolhas[i];
+                if (Math.sqrt((x - b.x)**2 + (y - b.y)**2) < b.raio) {
+                    bolhas.splice(i, 1);
+                    break;
+                }
+            }
+        }
+        canvasBolhas.addEventListener('mousedown', tocarBolha);
+        canvasBolhas.addEventListener('touchstart', tocarBolha);
 
-/* ============================================================
-   TOAST (notificação)
-   ============================================================ */
-function toast(msg, duracao = 3000) {
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), duracao);
-}
+        // ==========================================
+        // 2. RESPIRAÇÃO GUIADA
+        // ==========================================
+        const circulo = document.getElementById('circulo');
+        const textoRespira = document.getElementById('textoRespira');
+        let intervalRespira;
 
-/* ============================================================
-   CHAT
-   ============================================================ */
-function adicionarMensagem(tipo, texto) {
-  const box = document.getElementById('chatbox');
-  const div = document.createElement('div');
-  div.className = 'msg ' + tipo;
-  div.textContent = (tipo === 'user' ? 'Você: ' : 'Way: ') + texto;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-  return div;
-}
+        function iniciarRespiracao() {
+            clearInterval(intervalRespira);
+            let fase = 0;
+            function ciclo() {
+                if (fase === 0) { textoRespira.innerText = "Inspire..."; circulo.style.transform = "scale(2)"; fase = 1; }
+                else if (fase === 1) { textoRespira.innerText = "Segure..."; fase = 2; }
+                else if (fase === 2) { textoRespira.innerText = "Expire..."; circulo.style.transform = "scale(1)"; fase = 3; }
+                else { textoRespira.innerText = "Pausa..."; fase = 0; }
+            }
+            ciclo();
+            intervalRespira = setInterval(ciclo, 4000);
+        }
 
-async function enviar() {
-  const input = document.getElementById('input');
-  const msg = input.value.trim();
-  if (!msg) return;
+        // ==========================================
+        // 3. PINTURA LIVRE
+        // ==========================================
+        const canvasPintura = document.getElementById('canvasPintura');
+        const ctxPintura = canvasPintura.getContext('2d');
+        let desenhando = false;
 
-  if (state.credits < 1) {
-    toast('Créditos insuficientes! Compre mais na Loja.');
-    mudarTab('loja');
-    return;
-  }
+        function iniciarPintura() {
+            canvasPintura.width = canvasPintura.parentElement.clientWidth;
+            canvasPintura.height = canvasPintura.parentElement.clientHeight;
+            ctxPintura.lineCap = 'round';
+            ctxPintura.lineJoin = 'round';
+            ctxPintura.lineWidth = 6;
+        }
 
-  // Debita crédito
-  state.credits -= 1;
-  atualizarSaldo();
+        function drawPintura(e) {
+            if (!desenhando || jogoAtual !== 'pintura') return;
+            e.preventDefault();
+            let rect = canvasPintura.getBoundingClientRect();
+            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+            
+            ctxPintura.strokeStyle = `hsl(${(x + y) % 360}, 70%, 60%)`; // Cor muda com a posição
+            ctxPintura.lineTo(x, y);
+            ctxPintura.stroke();
+            ctxPintura.beginPath();
+            ctxPintura.moveTo(x, y);
+        }
 
-  // Adiciona mensagem do usuário
-  adicionarMensagem('user', msg);
-  input.value = '';
-  document.getElementById('btnEnviar').disabled = true;
+        canvasPintura.addEventListener('mousedown', (e) => { desenhando = true; drawPintura(e); });
+        canvasPintura.addEventListener('mousemove', drawPintura);
+        canvasPintura.addEventListener('mouseup', () => { desenhando = false; ctxPintura.beginPath(); });
+        canvasPintura.addEventListener('mouseout', () => { desenhando = false; ctxPintura.beginPath(); });
+        canvasPintura.addEventListener('touchstart', (e) => { desenhando = true; drawPintura(e); });
+        canvasPintura.addEventListener('touchmove', drawPintura);
+        canvasPintura.addEventListener('touchend', () => { desenhando = false; ctxPintura.beginPath(); });
 
-  // Indicador "digitando"
-  const typing = adicionarMensagem('way', '');
-  typing.classList.add('typing');
+        // ==========================================
+        // 4. JARDIM ZEN
+        // ==========================================
+        const canvasJardim = document.getElementById('canvasJardim');
+        const ctxJardim = canvasJardim.getContext('2d');
+        let flores = [];
+        let animJardim;
 
-  try {
-    const resposta = await chamarGemini(msg);
-    typing.remove();
-    adicionarMensagem('way', resposta);
-  } catch (e) {
-    typing.remove();
-    adicionarMensagem('way', '[Erro] ' + e.message);
-    state.credits += 1; // devolve crédito
-    atualizarSaldo();
-  }
+        function iniciarJardim() {
+            canvasJardim.width = canvasJardim.parentElement.clientWidth;
+            canvasJardim.height = canvasJardim.parentElement.clientHeight;
+            cancelAnimationFrame(animJardim);
+            loopJardim();
+        }
 
-  document.getElementById('btnEnviar').disabled = false;
-}
+        function plantarFlor(e) {
+            if (jogoAtual !== 'jardim') return;
+            let rect = canvasJardim.getBoundingClientRect();
+            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+            
+            flores.push({
+                x: x, y: y, tamanho: 0, maxTamanho: Math.random() * 20 + 15,
+                cor: `hsl(${Math.random() * 360}, 70%, 60%)`
+            });
+        }
+        canvasJardim.addEventListener('mousedown', plantarFlor);
+        canvasJardim.addEventListener('touchstart', plantarFlor);
 
-async function chamarGemini(mensagem) {
-  if (!CONFIG.GEMINI_API_KEY) {
-    await new Promise(r => setTimeout(r, 800));
-    return '[Modo simulado] Recebi: "' + mensagem + '".';
-  }
+        function loopJardim() {
+            if (jogoAtual !== 'jardim') return;
+            // Fundo tipo grama escura
+            ctxJardim.fillStyle = '#0f1a12'; 
+            ctxJardim.fillRect(0, 0, canvasJardim.width, canvasJardim.height);
 
-  const maxRetries = 4;
-  let delay = 1000; // 1 segundo inicial
+            for (let i = 0; i < flores.length; i++) {
+                let f = flores[i];
+                if (f.tamanho < f.maxTamanho) f.tamanho += 0.2; // Cresce suavemente
 
-  for (let tentativa = 1; tentativa <= maxRetries; tentativa++) {
-    try {
-      return await chamarGeminiUmaVez(mensagem);
-    } catch (e) {
-      const erro = e.message || '';
-      // Só tenta de novo para erros transitórios (503, 429, 500, 502, 504)
-      const erroTransitorio = erro.includes('503') || erro.includes('429') ||
-                              erro.includes('500') || erro.includes('502') ||
-                              erro.includes('504');
-      
-      if (!erroTransitorio || tentativa === maxRetries) {
-        throw e; // erro permanente ou esgotou tentativas
-      }
-      
-      // Jitter para evitar sobrecarga sincronizada
-      const jitter = Math.random() * 500;
-      console.log(`[Retry ${tentativa}/${maxRetries}] 503 detectado. Aguardando ${(delay+jitter)/1000}s...`);
-      
-      await new Promise(r => setTimeout(r, delay + jitter));
-      delay *= 2; // exponential backoff: 1s → 2s → 4s → 8s
-    }
-  }
-}
+                // Desenha caule
+                ctxJardim.beginPath();
+                ctxJardim.moveTo(f.x, f.y);
+                ctxJardim.lineTo(f.x, f.y - f.tamanho);
+                ctxJardim.strokeStyle = '#4caf50';
+                ctxJardim.stroke();
 
-async function chamarGeminiUmaVez(mensagem) {
-  // Adiciona ao histórico
-  state.history.push({ role: 'user', parts: [{ text: mensagem }] });
+                // Desenha pétalas
+                ctxJardim.beginPath();
+                ctxJardim.arc(f.x, f.y - f.tamanho, f.tamanho/2, 0, Math.PI * 2);
+                ctxJardim.fillStyle = f.cor;
+                ctxJardim.fill();
+            }
+            animJardim = requestAnimationFrame(loopJardim);
+        }
 
-  const body = { contents: state.history };
-  const instrucao = MODOS[state.mode];
-  if (instrucao) {
-    body.systemInstruction = { parts: [{ text: instrucao }] };
-  }
+        // ==========================================
+        // 5. ESTRELAS CADENTES
+        // ==========================================
+        const canvasEstrelas = document.getElementById('canvasEstrelas');
+        const ctxEstrelas = canvasEstrelas.getContext('2d');
+        let estrelas = [];
+        let animEstrelas;
 
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' +
-              'gemini-3.8-flash:generateContent?key=' + CONFIG.GEMINI_API_KEY;
+        function iniciarEstrelas() {
+            canvasEstrelas.width = canvasEstrelas.parentElement.clientWidth;
+            canvasEstrelas.height = canvasEstrelas.parentElement.clientHeight;
+            estrelas = [];
+            cancelAnimationFrame(animEstrelas);
+            loopEstrelas();
+        }
 
-  const resp = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
+        function desenharEstrela(e) {
+            if (jogoAtual !== 'estrelas') return;
+            let rect = canvasEstrelas.getBoundingClientRect();
+            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+            
+            estrelas.push({ x: x, y: y, brilho: 1, vida: 1 });
+        }
+        canvasEstrelas.addEventListener('mousedown', desenharEstrela);
+        canvasEstrelas.addEventListener('mousemove', (e) => { if(e.buttons === 1) desenharEstrela(e); }); // Desenha arrastando
+        canvasEstrelas.addEventListener('touchmove', desenharEstrela);
 
-  if (!resp.ok) {
-    const erro = await resp.text();
-    throw new Error('API ' + resp.status + ': ' + erro.substring(0, 200));
-  }
+        function loopEstrelas() {
+            if (jogoAtual !== 'estrelas') return;
+            ctxEstrelas.fillStyle = '#050510'; // Céu noturno
+            ctxEstrelas.fillRect(0, 0, canvasEstrelas.width, canvasEstrelas.height);
 
-  const data = await resp.json();
-  const reply = data.candidates[0].content.parts[0].text;
+            for (let i = estrelas.length - 1; i >= 0; i--) {
+                let st = estrelas[i];
+                st.vida -= 0.005;
+                if (st.vida <= 0) { estrelas.splice(i, 1); continue; }
 
-  state.history.push({ role: 'model', parts: [{ text: reply }] });
-  return reply;
-}
+                ctxEstrelas.beginPath();
+                ctxEstrelas.arc(st.x, st.y, 2, 0, Math.PI * 2);
+                ctxEstrelas.fillStyle = `rgba(255, 255, 200, ${st.vida})`;
+                ctxEstrelas.shadowBlur = 10;
+                ctxEstrelas.shadowColor = 'white';
+                ctxEstrelas.fill();
+                ctxEstrelas.shadowBlur = 0;
+            }
+            animEstrelas = requestAnimationFrame(loopEstrelas);
+        }
 
-/* ============================================================
-   LOJA E PIX
-   ============================================================ */
-function comprarCreditos() {
-  mudarTab('loja');
-}
+        // ==========================================
+        // 6. SONS DA NATUREZA (Web Audio API)
+        // ==========================================
+        let audioCtx = null;
+        let fontesAtivas = {};
 
-function comprar(creditos, valorCents, nome) {
-  const valor = (valorCents / 100).toFixed(2).replace('.', ',');
+        function tocarSom(tipo) {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
 
-  document.getElementById('pixPacote').textContent = nome;
-  document.getElementById('pixCreditos').textContent = creditos;
-  document.getElementById('pixValor').textContent = 'R$ ' + valor;
+            const bufferSize = audioCtx.sampleRate * 2;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            
+            // Gera Ruído
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
 
-  // Gera BR Code Pix
-  const brCode = gerarBrCodePix(creditos, valorCents);
+            let noiseSource = audioCtx.createBufferSource();
+            noiseSource.buffer = buffer;
+            noiseSource.loop = true;
 
-  document.getElementById('pixCode').textContent = brCode;
+            let filter = audioCtx.createBiquadFilter();
+            let gain = audioCtx.createGain();
+            gain.gain.value = 0.3;
 
-  // Gera QR Code visual
-  desenharQrCode(brCode);
+            if (tipo === 'chuva') {
+                filter.type = 'lowpass';
+                filter.frequency.value = 1000;
+            } else if (tipo === 'mar') {
+                filter.type = 'lowpass';
+                filter.frequency.value = 400; // Som mais grave
+            } else if (tipo === 'floresta') {
+                filter.type = 'bandpass';
+                filter.frequency.value = 2000;
+            } else {
+                filter.type = 'allpass'; // Ruído branco puro
+            }
 
-  document.getElementById('modalPix').classList.remove('hidden');
-}
+            noiseSource.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            noiseSource.start();
 
-function fecharModalPix() {
-  document.getElementById('modalPix').classList.add('hidden');
-}
+            return { source: noiseSource, gain: gain };
+        }
 
-function copiarPix() {
-  const code = document.getElementById('pixCode').textContent;
-  navigator.clipboard.writeText(code).then(() => {
-    toast('Código Pix copiado!');
-  });
-}
+        function toggleSom(tipo, btn) {
+            if (fontesAtivas[tipo]) {
+                // Desliga
+                fontesAtivas[tipo].gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                setTimeout(() => { fontesAtivas[tipo].source.stop(); }, 500);
+                delete fontesAtivas[tipo];
+                btn.classList.remove('ativo');
+            } else {
+                // Liga
+                fontesAtivas[tipo] = tocarSom(tipo);
+                btn.classList.add('ativo');
+            }
+        }
 
-/* ============================================================
-   BR CODE PIX (padrão EMV)
-   ============================================================ */
-function gerarBrCodePix(creditos, valorCents) {
-  const chave = CONFIG.PIX_CHAVE;
-  const nome  = CONFIG.PIX_NOME.substring(0, 25);
-  const cidade = CONFIG.PIX_CIDADE.substring(0, 15);
-  const valor = (valorCents / 100).toFixed(2);
-  const txid = 'WAY' + Date.now().toString().slice(-10);
+        function pararTodosSons() {
+            for (let tipo in fontesAtivas) {
+                if (fontesAtivas[tipo]) {
+                    fontesAtivas[tipo].source.stop();
+                }
+            }
+            fontesAtivas = {};
+            document.querySelectorAll('.btn-som').forEach(b => b.classList.remove('ativo'));
+        }
 
-  const gui = '0014br.gov.bcb.pix';
-  const chaveStr = '01' + String(chave.length).padStart(2, '0') + chave;
-  const merchantAccount = gui + chaveStr;
-  const id26 = '26' + String(merchantAccount.length).padStart(2, '0') + merchantAccount;
-
-  const id52 = '52040000';
-  const id53 = '5303986';
-  const id54 = '54' + String(valor.length).padStart(2, '0') + valor;
-  const id58 = '5802BR';
-  const id59 = '59' + String(nome.length).padStart(2, '0') + nome;
-  const id60 = '60' + String(cidade.length).padStart(2, '0') + cidade;
-
-  const txidField = '05' + String(txid.length).padStart(2, '0') + txid;
-  const id62 = '62' + String(txidField.length).padStart(2, '0') + txidField;
-
-  const payload = '000201' + id26 + id52 + id53 + id54 + id58 + id59 + id60 + id62 + '6304';
-
-  return payload + crc16(payload);
-}
-
-function crc16(payload) {
-  let crc = 0xFFFF;
-  const poly = 0x1021;
-  const bytes = new TextEncoder().encode(payload);
-
-  for (const b of bytes) {
-    for (let i = 0; i < 8; i++) {
-      const bit = ((b >> (7 - i)) & 1) === 1;
-      const c15 = ((crc >> 15) & 1) === 1;
-      crc <<= 1;
-      if (c15 !== bit) crc ^= poly;
-    }
-  }
-  return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
-}
-
-/* ============================================================
-   QR CODE SIMPLES (desenho via canvas)
-   Nota: sem dependências externas, mas o QR "funcional" requer
-   uma lib como qrcode.js. Aqui geramos um placeholder visual.
-   ============================================================ */
-function desenharQrCode(texto) {
-  const canvas = document.getElementById('qrCanvas');
-  const ctx = canvas.getContext('2d');
-  const size = 280;
-  const cells = 33;
-  const cellSize = size / cells;
-
-  // Fundo branco
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(0, 0, size, size);
-
-  // Gera "hash" visual do texto para padrão determinístico
-  let hash = 0;
-  for (let i = 0; i < texto.length; i++) {
-    hash = ((hash << 5) - hash + texto.charCodeAt(i)) | 0;
-  }
-
-  // Preto
-  ctx.fillStyle = '#000';
-
-  // Marcadores de posição (cantos)
-  const desenharMarcador = (x, y) => {
-    ctx.fillRect(x, y, 7 * cellSize, 7 * cellSize);
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(x + cellSize, y + cellSize, 5 * cellSize, 5 * cellSize);
-    ctx.fillStyle = '#000';
-    ctx.fillRect(x + 2 * cellSize, y + 2 * cellSize, 3 * cellSize, 3 * cellSize);
-  };
-
-  desenharMarcador(0, 0);
-  desenharMarcador((cells - 7) * cellSize, 0);
-  desenharMarcador(0, (cells - 7) * cellSize);
-
-  // Padrão pseudo-aleatório nas áreas restantes
-  for (let x = 0; x < cells; x++) {
-    for (let y = 0; y < cells; y++) {
-      // Pula áreas dos marcadores
-      if ((x < 8 && y < 8) ||
-          (x >= cells - 8 && y < 8) ||
-          (x < 8 && y >= cells - 8)) continue;
-
-      // Pseudo-aleatório baseado no hash + posição
-      const val = (hash * (x + 1) * (y + 1) + x * 31 + y * 17) % 100;
-      if (val < 45) {
-        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-      }
-    }
-  }
-
-  // Aviso no rodapé do canvas
-  ctx.fillStyle = '#888';
-  ctx.font = '10px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('⚠️ QR visual — use a lib qrcode.js para QR real', size / 2, size - 4);
-}
-
-/* ============================================================
-   INICIALIZAÇÃO
-   ============================================================ */
-document.addEventListener('DOMContentLoaded', () => {
-  criarParticulas();
-  atualizarSaldo();
-
-  // Enter para enviar
-  document.getElementById('input').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      enviar();
-    }
-  });
-
-  // Atualiza modo ao trocar o select
-  document.getElementById('mode').addEventListener('change', (e) => {
-    state.mode = e.target.value;
-    toast('Modo: ' + e.target.options[e.target.selectedIndex].text);
-  });
-
-  // Mensagem de boas-vindas
-  adicionarMensagem('way',
-    'Olá! Sou o Way AI. Escolha um modo e comece a conversar.\n' +
-    'Você tem ' + state.credits + ' créditos grátis para testar.'
-  );
-});
-// Salvar
-localStorage.setItem('way_state', JSON.stringify({
-  credits: state.credits,
-  history: state.history
-}));
-
-// Carregar
-const salvo = localStorage.getItem('way_state');
-if (salvo) {
-  const dados = JSON.parse(salvo);
-  state.credits = dados.credits;
-  state.history = dados.history;
-}
-</script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+        // Inicializador
+        window.onload = () => iniciarBolhas();
+        window.onresize = () => {
+            if (jogoAtual === 'bolhas') iniciarBolhas();
+            if (jogoAtual === 'pintura') iniciarPintura();
+            if (jogoAtual === 'jardim') iniciarJardim();
+            if (jogoAtual === 'estrelas') iniciarEstrelas();
+        };
+    </script>
 </body>
 </html>
