@@ -1,538 +1,332 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Street Partners - Espaço Relax</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            user-select: none;
-        }
-
-        body {
-            background: linear-gradient(145deg, #0b0e1a, #1a1f2f);
-            color: #f0f3fa;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-x: hidden;
-        }
-
-        header {
-            width: 100%;
-            padding: 15px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.2);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        header h1 {
-            color: #f7c948;
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-
-        header p {
-            color: #a8b5d9;
-            font-size: 0.8rem;
-        }
-
-        .menu {
-            display: flex;
-            gap: 10px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 0 10px;
-        }
-
-        .btn-jogo {
-            padding: 10px 18px;
-            border-radius: 30px;
-            border: 2px solid rgba(247, 201, 72, 0.3);
-            background: transparent;
-            color: #f7c948;
-            font-size: 0.85rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-jogo:hover, .btn-jogo.ativo {
-            background: #f7c948;
-            color: #0b0e1a;
-            border-color: #f7c948;
-            box-shadow: 0 0 15px rgba(247, 201, 72, 0.4);
-        }
-
-        .area-jogo {
-            width: 95%;
-            max-width: 800px;
-            height: 500px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            position: relative;
-            overflow: hidden;
-            display: none;
-        }
-
-        .area-jogo.ativo {
-            display: block;
-        }
-
-        canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-            touch-action: none;
-        }
-
-        .respira-container {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            background: #0b0e1a;
-            z-index: 10;
-        }
-
-        .circulo-respira {
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, #4fc3f7, #1a5f8a);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 40px rgba(79, 195, 247, 0.3);
-            transition: transform 4s ease-in-out;
-        }
-
-        .texto-respira {
-            margin-top: 40px;
-            font-size: 1.5rem;
-            color: #f0f3fa;
-            font-weight: 300;
-            letter-spacing: 2px;
-        }
-
-        /* Estilos para Sons da Natureza */
-        .sons-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            padding: 20px;
-        }
-
-        .btn-som {
-            width: 120px;
-            height: 120px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-            font-size: 2.5rem;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: 0.3s;
-        }
-
-        .btn-som span {
-            font-size: 0.8rem;
-            margin-top: 10px;
-            color: #a8b5d9;
-        }
-
-        .btn-som.ativo {
-            background: rgba(79, 195, 247, 0.2);
-            border-color: #4fc3f7;
-            box-shadow: 0 0 20px rgba(79, 195, 247, 0.4);
-        }
-
-        footer {
-            margin-top: auto;
-            padding: 15px;
-            font-size: 0.8rem;
-            color: #6b7699;
-            text-align: center;
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>n77.bet · Operações</title>
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#121821; --panel-2:#182231; --line:#233043;
+    --txt:#e6edf3; --muted:#93a1b3; --brand:#3ea6ff; --ok:#22c55e;
+    --warn:#f59e0b; --err:#ef4444; --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.5 system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt)}
+  header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;
+         border-bottom:1px solid var(--line);background:var(--panel)}
+  header h1{margin:0;font-size:18px;letter-spacing:.5px}
+  header h1 span{color:var(--brand)}
+  .status{font-size:12px;color:var(--muted)}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--err);margin-right:6px}
+  .dot.up{background:var(--ok)}
+  main{max-width:1100px;margin:24px auto;padding:0 16px;display:grid;gap:20px;
+       grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  section h2{margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+  label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+  input,select{width:100%;padding:9px 10px;background:var(--panel-2);border:1px solid var(--line);
+               border-radius:8px;color:var(--txt);font:inherit}
+  input:focus,select:focus{outline:2px solid var(--brand);outline-offset:0;border-color:transparent}
+  button{margin-top:14px;width:100%;padding:10px 14px;border:0;border-radius:8px;font:inherit;
+         font-weight:600;cursor:pointer;background:var(--brand);color:#04121f}
+  button.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+  button:hover{opacity:.9}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .kv:last-child{border-bottom:0}
+  .kv b{font-weight:600}
+  .big{font-size:26px;font-weight:700;letter-spacing:.3px}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600}
+  .pill.pending{background:#3b2f10;color:var(--warn)}
+  .pill.approved,.pill.paid{background:#0e2f1c;color:var(--ok)}
+  .pill.failed,.pill.rejected{background:#3a1414;color:var(--err)}
+  pre{background:var(--panel-2);padding:10px;border-radius:8px;font-size:12px;
+      max-height:180px;overflow:auto;white-space:pre-wrap;word-break:break-all;margin:0}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:500;font-size:12px}
+  .muted{color:var(--muted);font-size:12px}
+  .actions{display:flex;gap:8px;margin-top:10px}
+  .actions button{margin:0}
+  .toast{position:fixed;right:20px;bottom:20px;padding:12px 16px;border-radius:10px;
+         background:var(--panel-2);border:1px solid var(--line);font-size:13px;
+         transform:translateY(20px);opacity:0;transition:.25s;pointer-events:none}
+  .toast.show{transform:translateY(0);opacity:1}
+  .toast.ok{border-color:var(--ok)} .toast.err{border-color:var(--err)}
+</style>
 </head>
 <body>
 
-    <header>
-        <h1>🧩 Street Partners</h1>
-        <p>Regule seus sentidos e respire</p>
-    </header>
+<header>
+  <h1>n77<span>.bet</span> · operações</h1>
+  <div class="status"><span id="dot" class="dot"></span><span id="statusTxt">verificando API…</span></div>
+</header>
 
-    <div class="menu">
-        <button class="btn-jogo ativo" onclick="mudarJogo('bolhas', this)">🫧 Bolhas</button>
-        <button class="btn-jogo" onclick="mudarJogo('respiracao', this)">🧘 Respiração</button>
-        <button class="btn-jogo" onclick="mudarJogo('pintura', this)">🎨 Pintura</button>
-        <button class="btn-jogo" onclick="mudarJogo('jardim', this)">🌻 Jardim Zen</button>
-        <button class="btn-jogo" onclick="mudarJogo('estrelas', this)">✨ Estrelas</button>
-        <button class="btn-jogo" onclick="mudarJogo('sons', this)">🎵 Sons</button>
+<main>
+
+  <!-- CARTEIRA -->
+  <section>
+    <h2>Carteira</h2>
+    <label>Usuário (ID)</label>
+    <input id="userId" type="number" value="1" min="1" />
+    <div class="actions">
+      <button class="ghost" onclick="loadBalance()">Consultar saldo</button>
     </div>
-
-    <div class="area-jogo ativo" id="jogo-bolhas"><canvas id="canvasBolhas"></canvas></div>
-    
-    <div class="area-jogo" id="jogo-respiracao">
-        <div class="respira-container">
-            <div class="circulo-respira" id="circulo"></div>
-            <div class="texto-respira" id="textoRespira">Inspire...</div>
-        </div>
+    <div style="margin-top:16px">
+      <div class="muted">Saldo disponível</div>
+      <div class="big" id="balance">—</div>
     </div>
+    <div class="kv"><span>Em retenção (saques)</span><b id="hold">—</b></div>
+  </section>
 
-    <div class="area-jogo" id="jogo-pintura"><canvas id="canvasPintura"></canvas></div>
-    
-    <div class="area-jogo" id="jogo-jardim"><canvas id="canvasJardim"></canvas></div>
-    
-    <div class="area-jogo" id="jogo-estrelas"><canvas id="canvasEstrelas"></canvas></div>
+  <!-- DEPÓSITO -->
+  <section>
+    <h2>Depósito Pix</h2>
+    <label>Valor (centavos)</label>
+    <input id="depAmt" type="number" value="5000" min="100" step="100" />
+    <label>Usuário (ID)</label>
+    <input id="depUser" type="number" value="1" min="1" />
+    <button onclick="deposit()">Gerar cobrança Pix</button>
+    <div id="depOut" style="margin-top:14px"></div>
+  </section>
 
-    <div class="area-jogo" id="jogo-sons">
-        <div class="sons-container">
-            <button class="btn-som" onclick="toggleSom('chuva', this)">🌧️<span>Chuva</span></button>
-            <button class="btn-som" onclick="toggleSom('mar', this)">🌊<span>Mar</span></button>
-            <button class="btn-som" onclick="toggleSom('floresta', this)">🌲<span>Floresta</span></button>
-            <button class="btn-som" onclick="toggleSom('ruido', this)">📻<span>Ruído Branco</span></button>
-        </div>
+  <!-- SAQUE -->
+  <section>
+    <h2>Solicitar saque</h2>
+    <label>Valor (centavos)</label>
+    <input id="wdAmt" type="number" value="2000" min="100" step="100" />
+    <label>Chave Pix</label>
+    <input id="wdKey" type="text" placeholder="email, CPF, telefone ou aleatória" />
+    <label>Usuário (ID)</label>
+    <input id="wdUser" type="number" value="1" min="1" />
+    <button onclick="withdraw()">Solicitar saque</button>
+    <div id="wdOut" style="margin-top:14px"></div>
+  </section>
+
+  <!-- ADMIN -->
+  <section>
+    <h2>Backoffice · aprovar saque</h2>
+    <label>Token admin</label>
+    <input id="adminTok" type="text" value="dev-admin" />
+    <label>ID externo do saque</label>
+    <input id="payoutId" type="text" placeholder="cole o externalId retornado no saque" />
+    <button onclick="approve()">Aprovar saque</button>
+    <div id="appOut" style="margin-top:14px"></div>
+  </section>
+
+  <!-- WEBHOOK -->
+  <section style="grid-column:1/-1">
+    <h2>Simular webhook Pix pago</h2>
+    <p class="muted">Envia um evento assinado com HMAC-SHA256 para <code>/webhooks/psp/pix</code>.
+       Útil para conciliar um depósito pendente. Precisa do <code>chargeId</code> retornado no depósito.</p>
+    <div class="row">
+      <div>
+        <label>eventId</label>
+        <input id="whEvt" type="text" value="evt_demo_1" />
+      </div>
+      <div>
+        <label>chargeId (psp_)</label>
+        <input id="whCharge" type="text" placeholder="psp_..." />
+      </div>
     </div>
+    <label>Segredo HMAC</label>
+    <input id="whSecret" type="text" value="dev-secret" />
+    <button onclick="sendWebhook()">Enviar webhook</button>
+    <div id="whOut" style="margin-top:14px"></div>
+  </section>
 
-    <footer>A luta é em equipe. Você está seguro. 💙</footer>
+  <!-- AUDITORIA -->
+  <section style="grid-column:1/-1">
+    <h2>Trilha local (nesta sessão)</h2>
+    <table>
+      <thead><tr><th>Hora</th><th>Ação</th><th>Referência</th><th>Resultado</th></tr></thead>
+      <tbody id="log"><tr><td colspan="4" class="muted">Nenhuma ação ainda.</td></tr></tbody>
+    </table>
+  </section>
 
-    <script>
-        let jogoAtual = 'bolhas';
+</main>
 
-        function mudarJogo(jogo, btn) {
-            jogoAtual = jogo;
-            document.querySelectorAll('.btn-jogo').forEach(b => b.classList.remove('ativo'));
-            btn.classList.add('ativo');
+<div id="toast" class="toast"></div>
 
-            document.querySelectorAll('.area-jogo').forEach(area => area.classList.remove('ativo'));
-            document.getElementById('jogo-' + jogo).classList.add('ativo');
+<script>
+const API = "http://localhost:8080";
+const $ = (id) => document.getElementById(id);
 
-            if (jogo === 'bolhas') iniciarBolhas();
-            if (jogo === 'respiracao') iniciarRespiracao();
-            if (jogo === 'pintura') iniciarPintura();
-            if (jogo === 'jardim') iniciarJardim();
-            if (jogo === 'estrelas') iniciarEstrelas();
-            if (jogo === 'sons') pararTodosSons(); // Para os sons se mudar de tela
-        }
+function toast(msg, kind = "ok") {
+  const t = $("toast");
+  t.textContent = msg;
+  t.className = "toast show " + kind;
+  clearTimeout(t._t);
+  t._t = setTimeout(() => (t.className = "toast"), 2600);
+}
 
-        // ==========================================
-        // 1. BOLHAS SENSORIAIS
-        // ==========================================
-        const canvasBolhas = document.getElementById('canvasBolhas');
-        const ctxBolhas = canvasBolhas.getContext('2d');
-        let bolhas = [];
-        let animBolhas;
+function log(action, ref, result) {
+  const tb = $("log");
+  if (tb.querySelector(".muted")) tb.innerHTML = "";
+  const tr = document.createElement("tr");
+  const now = new Date().toLocaleTimeString();
+  tr.innerHTML = `<td>${now}</td><td>${action}</td><td>${ref}</td><td>${result}</td>`;
+  tb.prepend(tr);
+}
 
-        function iniciarBolhas() {
-            canvasBolhas.width = canvasBolhas.parentElement.clientWidth;
-            canvasBolhas.height = canvasBolhas.parentElement.clientHeight;
-            bolhas = [];
-            cancelAnimationFrame(animBolhas);
-            loopBolhas();
-        }
+function money(cents) {
+  if (cents == null) return "—";
+  return (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
 
-        function criarBolha() {
-            bolhas.push({
-                x: Math.random() * canvasBolhas.width,
-                y: canvasBolhas.height + 50,
-                raio: Math.random() * 30 + 10,
-                velocidade: Math.random() * 1.5 + 0.5,
-                cor: `hsla(${Math.random() * 360}, 60%, 60%, 0.4)`
-            });
-        }
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, {
+    ...opts,
+    headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
+  });
+  const text = await res.text();
+  let body = null;
+  try { body = text ? JSON.parse(text) : null; } catch { body = { raw: text }; }
+  if (!res.ok) throw new Error((body && body.error) || `HTTP ${res.status}`);
+  return body;
+}
 
-        function loopBolhas() {
-            if (jogoAtual !== 'bolhas') return;
-            ctxBolhas.clearRect(0, 0, canvasBolhas.width, canvasBolhas.height);
-            if (Math.random() < 0.04) criarBolha();
+async function ping() {
+  try {
+    await api("/health");
+    $("dot").classList.add("up");
+    $("statusTxt").textContent = "API online · " + API;
+  } catch {
+    $("dot").classList.remove("up");
+    $("statusTxt").textContent = "API offline · " + API;
+  }
+}
 
-            for (let i = bolhas.length - 1; i >= 0; i--) {
-                let b = bolhas[i];
-                b.y -= b.velocidade;
-                ctxBolhas.beginPath();
-                ctxBolhas.arc(b.x, b.y, b.raio, 0, Math.PI * 2);
-                ctxBolhas.fillStyle = b.cor;
-                ctxBolhas.fill();
-                if (b.y < -50) bolhas.splice(i, 1);
-            }
-            animBolhas = requestAnimationFrame(loopBolhas);
-        }
+async function loadBalance() {
+  const uid = $("userId").value;
+  try {
+    const b = await api(`/wallet/balance?userId=${encodeURIComponent(uid)}`);
+    $("balance").textContent = money(b.balanceCents);
+    $("hold").textContent = "—"; // backend não expõe retenção ainda
+    log("consultar saldo", "user:" + uid, money(b.balanceCents));
+  } catch (e) {
+    toast(e.message, "err");
+    log("consultar saldo", "user:" + uid, "erro: " + e.message);
+  }
+}
 
-        function tocarBolha(e) {
-            if (jogoAtual !== 'bolhas') return;
-            let rect = canvasBolhas.getBoundingClientRect();
-            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-            for (let i = bolhas.length - 1; i >= 0; i--) {
-                let b = bolhas[i];
-                if (Math.sqrt((x - b.x)**2 + (y - b.y)**2) < b.raio) {
-                    bolhas.splice(i, 1);
-                    break;
-                }
-            }
-        }
-        canvasBolhas.addEventListener('mousedown', tocarBolha);
-        canvasBolhas.addEventListener('touchstart', tocarBolha);
+async function deposit() {
+  const payload = {
+    userId: Number($("depUser").value),
+    amountCents: Number($("depAmt").value),
+  };
+  try {
+    const c = await api("/wallet/pix/deposit", { method: "POST", body: JSON.stringify(payload) });
+    $("depOut").innerHTML = `
+      <div class="kv"><span>Status</span><b><span class="pill ${c.status}">${c.status}</span></b></div>
+      <div class="kv"><span>externalId</span><b>${c.externalId}</b></div>
+      <div class="kv"><span>chargeId</span><b>${c.chargeId}</b></div>
+      <div class="kv"><span>Valor</span><b>${money(c.amountCents)}</b></div>
+      <div class="muted" style="margin-top:8px">Pix copia-e-cola</div>
+      <pre>${c.qrCode}</pre>
+      <button class="ghost" onclick="prefillWebhook('${c.chargeId}')">Usar este chargeId no webhook</button>`;
+    $("whCharge").value = c.chargeId;
+    log("depósito criado", c.externalId, c.status);
+    toast("Cobrança Pix criada");
+  } catch (e) {
+    toast(e.message, "err");
+    log("depósito criado", "user:" + payload.userId, "erro: " + e.message);
+  }
+}
 
-        // ==========================================
-        // 2. RESPIRAÇÃO GUIADA
-        // ==========================================
-        const circulo = document.getElementById('circulo');
-        const textoRespira = document.getElementById('textoRespira');
-        let intervalRespira;
+function prefillWebhook(chargeId) {
+  $("whCharge").value = chargeId;
+  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+}
 
-        function iniciarRespiracao() {
-            clearInterval(intervalRespira);
-            let fase = 0;
-            function ciclo() {
-                if (fase === 0) { textoRespira.innerText = "Inspire..."; circulo.style.transform = "scale(2)"; fase = 1; }
-                else if (fase === 1) { textoRespira.innerText = "Segure..."; fase = 2; }
-                else if (fase === 2) { textoRespira.innerText = "Expire..."; circulo.style.transform = "scale(1)"; fase = 3; }
-                else { textoRespira.innerText = "Pausa..."; fase = 0; }
-            }
-            ciclo();
-            intervalRespira = setInterval(ciclo, 4000);
-        }
+async function withdraw() {
+  const payload = {
+    userId: Number($("wdUser").value),
+    amountCents: Number($("wdAmt").value),
+    pixKey: $("wdKey").value.trim(),
+  };
+  if (!payload.pixKey) return toast("Informe a chave Pix", "err");
+  try {
+    const p = await api("/wallet/pix/withdraw", { method: "POST", body: JSON.stringify(payload) });
+    $("wdOut").innerHTML = `
+      <div class="kv"><span>Status</span><b><span class="pill ${p.status}">${p.status}</span></b></div>
+      <div class="kv"><span>externalId</span><b>${p.externalId}</b></div>
+      <div class="kv"><span>Valor</span><b>${money(p.amountCents)}</b></div>`;
+    $("payoutId").value = p.externalId;
+    log("saque solicitado", p.externalId, p.status);
+    toast("Saque enviado para revisão");
+  } catch (e) {
+    toast(e.message, "err");
+    log("saque solicitado", "user:" + payload.userId, "erro: " + e.message);
+  }
+}
 
-        // ==========================================
-        // 3. PINTURA LIVRE
-        // ==========================================
-        const canvasPintura = document.getElementById('canvasPintura');
-        const ctxPintura = canvasPintura.getContext('2d');
-        let desenhando = false;
+async function approve() {
+  const externalId = $("payoutId").value.trim();
+  if (!externalId) return toast("Informe o externalId do saque", "err");
+  try {
+    const p = await api("/admin/withdrawals/approve", {
+      method: "POST",
+      headers: { "X-Admin-Token": $("adminTok").value.trim() },
+      body: JSON.stringify({ externalId }),
+    });
+    $("appOut").innerHTML = `
+      <div class="kv"><span>Status</span><b><span class="pill ${p.status}">${p.status}</span></b></div>
+      <div class="kv"><span>Valor</span><b>${money(p.amountCents)}</b></div>`;
+    log("saque aprovado", p.externalId, p.status);
+    toast("Saque aprovado");
+  } catch (e) {
+    toast(e.message, "err");
+    log("saque aprovado", externalId, "erro: " + e.message);
+  }
+}
 
-        function iniciarPintura() {
-            canvasPintura.width = canvasPintura.parentElement.clientWidth;
-            canvasPintura.height = canvasPintura.parentElement.clientHeight;
-            ctxPintura.lineCap = 'round';
-            ctxPintura.lineJoin = 'round';
-            ctxPintura.lineWidth = 6;
-        }
+async function hmacHex(secret, text) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(text));
+  return [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
 
-        function drawPintura(e) {
-            if (!desenhando || jogoAtual !== 'pintura') return;
-            e.preventDefault();
-            let rect = canvasPintura.getBoundingClientRect();
-            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-            
-            ctxPintura.strokeStyle = `hsl(${(x + y) % 360}, 70%, 60%)`; // Cor muda com a posição
-            ctxPintura.lineTo(x, y);
-            ctxPintura.stroke();
-            ctxPintura.beginPath();
-            ctxPintura.moveTo(x, y);
-        }
+async function sendWebhook() {
+  const eventId = $("whEvt").value.trim();
+  const chargeId = $("whCharge").value.trim();
+  const secret = $("whSecret").value;
+  if (!eventId || !chargeId) return toast("Informe eventId e chargeId", "err");
 
-        canvasPintura.addEventListener('mousedown', (e) => { desenhando = true; drawPintura(e); });
-        canvasPintura.addEventListener('mousemove', drawPintura);
-        canvasPintura.addEventListener('mouseup', () => { desenhando = false; ctxPintura.beginPath(); });
-        canvasPintura.addEventListener('mouseout', () => { desenhando = false; ctxPintura.beginPath(); });
-        canvasPintura.addEventListener('touchstart', (e) => { desenhando = true; drawPintura(e); });
-        canvasPintura.addEventListener('touchmove', drawPintura);
-        canvasPintura.addEventListener('touchend', () => { desenhando = false; ctxPintura.beginPath(); });
+  // Backend espera o campo "data.chargeId" e um "chargeId" achatado no corpo.
+  const body = JSON.stringify({
+    id: eventId, type: "pix.paid", chargeId,
+    data: { chargeId }
+  });
+  const sig = await hmacHex(secret, body);
 
-        // ==========================================
-        // 4. JARDIM ZEN
-        // ==========================================
-        const canvasJardim = document.getElementById('canvasJardim');
-        const ctxJardim = canvasJardim.getContext('2d');
-        let flores = [];
-        let animJardim;
+  try {
+    const res = await fetch(API + "/webhooks/psp/pix", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Signature": sig },
+      body,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "HTTP " + res.status);
+    $("whOut").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    log("webhook pix.paid", eventId, data.idempotent ? "idempotente" : "processado");
+    toast("Webhook aceito");
+    loadBalance();
+  } catch (e) {
+    toast(e.message, "err");
+    log("webhook pix.paid", eventId, "erro: " + e.message);
+  }
+}
 
-        function iniciarJardim() {
-            canvasJardim.width = canvasJardim.parentElement.clientWidth;
-            canvasJardim.height = canvasJardim.parentElement.clientHeight;
-            cancelAnimationFrame(animJardim);
-            loopJardim();
-        }
-
-        function plantarFlor(e) {
-            if (jogoAtual !== 'jardim') return;
-            let rect = canvasJardim.getBoundingClientRect();
-            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-            
-            flores.push({
-                x: x, y: y, tamanho: 0, maxTamanho: Math.random() * 20 + 15,
-                cor: `hsl(${Math.random() * 360}, 70%, 60%)`
-            });
-        }
-        canvasJardim.addEventListener('mousedown', plantarFlor);
-        canvasJardim.addEventListener('touchstart', plantarFlor);
-
-        function loopJardim() {
-            if (jogoAtual !== 'jardim') return;
-            // Fundo tipo grama escura
-            ctxJardim.fillStyle = '#0f1a12'; 
-            ctxJardim.fillRect(0, 0, canvasJardim.width, canvasJardim.height);
-
-            for (let i = 0; i < flores.length; i++) {
-                let f = flores[i];
-                if (f.tamanho < f.maxTamanho) f.tamanho += 0.2; // Cresce suavemente
-
-                // Desenha caule
-                ctxJardim.beginPath();
-                ctxJardim.moveTo(f.x, f.y);
-                ctxJardim.lineTo(f.x, f.y - f.tamanho);
-                ctxJardim.strokeStyle = '#4caf50';
-                ctxJardim.stroke();
-
-                // Desenha pétalas
-                ctxJardim.beginPath();
-                ctxJardim.arc(f.x, f.y - f.tamanho, f.tamanho/2, 0, Math.PI * 2);
-                ctxJardim.fillStyle = f.cor;
-                ctxJardim.fill();
-            }
-            animJardim = requestAnimationFrame(loopJardim);
-        }
-
-        // ==========================================
-        // 5. ESTRELAS CADENTES
-        // ==========================================
-        const canvasEstrelas = document.getElementById('canvasEstrelas');
-        const ctxEstrelas = canvasEstrelas.getContext('2d');
-        let estrelas = [];
-        let animEstrelas;
-
-        function iniciarEstrelas() {
-            canvasEstrelas.width = canvasEstrelas.parentElement.clientWidth;
-            canvasEstrelas.height = canvasEstrelas.parentElement.clientHeight;
-            estrelas = [];
-            cancelAnimationFrame(animEstrelas);
-            loopEstrelas();
-        }
-
-        function desenharEstrela(e) {
-            if (jogoAtual !== 'estrelas') return;
-            let rect = canvasEstrelas.getBoundingClientRect();
-            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-            
-            estrelas.push({ x: x, y: y, brilho: 1, vida: 1 });
-        }
-        canvasEstrelas.addEventListener('mousedown', desenharEstrela);
-        canvasEstrelas.addEventListener('mousemove', (e) => { if(e.buttons === 1) desenharEstrela(e); }); // Desenha arrastando
-        canvasEstrelas.addEventListener('touchmove', desenharEstrela);
-
-        function loopEstrelas() {
-            if (jogoAtual !== 'estrelas') return;
-            ctxEstrelas.fillStyle = '#050510'; // Céu noturno
-            ctxEstrelas.fillRect(0, 0, canvasEstrelas.width, canvasEstrelas.height);
-
-            for (let i = estrelas.length - 1; i >= 0; i--) {
-                let st = estrelas[i];
-                st.vida -= 0.005;
-                if (st.vida <= 0) { estrelas.splice(i, 1); continue; }
-
-                ctxEstrelas.beginPath();
-                ctxEstrelas.arc(st.x, st.y, 2, 0, Math.PI * 2);
-                ctxEstrelas.fillStyle = `rgba(255, 255, 200, ${st.vida})`;
-                ctxEstrelas.shadowBlur = 10;
-                ctxEstrelas.shadowColor = 'white';
-                ctxEstrelas.fill();
-                ctxEstrelas.shadowBlur = 0;
-            }
-            animEstrelas = requestAnimationFrame(loopEstrelas);
-        }
-
-        // ==========================================
-        // 6. SONS DA NATUREZA (Web Audio API)
-        // ==========================================
-        let audioCtx = null;
-        let fontesAtivas = {};
-
-        function tocarSom(tipo) {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
-            const bufferSize = audioCtx.sampleRate * 2;
-            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const data = buffer.getChannelData(0);
-            
-            // Gera Ruído
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1;
-            }
-
-            let noiseSource = audioCtx.createBufferSource();
-            noiseSource.buffer = buffer;
-            noiseSource.loop = true;
-
-            let filter = audioCtx.createBiquadFilter();
-            let gain = audioCtx.createGain();
-            gain.gain.value = 0.3;
-
-            if (tipo === 'chuva') {
-                filter.type = 'lowpass';
-                filter.frequency.value = 1000;
-            } else if (tipo === 'mar') {
-                filter.type = 'lowpass';
-                filter.frequency.value = 400; // Som mais grave
-            } else if (tipo === 'floresta') {
-                filter.type = 'bandpass';
-                filter.frequency.value = 2000;
-            } else {
-                filter.type = 'allpass'; // Ruído branco puro
-            }
-
-            noiseSource.connect(filter);
-            filter.connect(gain);
-            gain.connect(audioCtx.destination);
-            noiseSource.start();
-
-            return { source: noiseSource, gain: gain };
-        }
-
-        function toggleSom(tipo, btn) {
-            if (fontesAtivas[tipo]) {
-                // Desliga
-                fontesAtivas[tipo].gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-                setTimeout(() => { fontesAtivas[tipo].source.stop(); }, 500);
-                delete fontesAtivas[tipo];
-                btn.classList.remove('ativo');
-            } else {
-                // Liga
-                fontesAtivas[tipo] = tocarSom(tipo);
-                btn.classList.add('ativo');
-            }
-        }
-
-        function pararTodosSons() {
-            for (let tipo in fontesAtivas) {
-                if (fontesAtivas[tipo]) {
-                    fontesAtivas[tipo].source.stop();
-                }
-            }
-            fontesAtivas = {};
-            document.querySelectorAll('.btn-som').forEach(b => b.classList.remove('ativo'));
-        }
-
-        // Inicializador
-        window.onload = () => iniciarBolhas();
-        window.onresize = () => {
-            if (jogoAtual === 'bolhas') iniciarBolhas();
-            if (jogoAtual === 'pintura') iniciarPintura();
-            if (jogoAtual === 'jardim') iniciarJardim();
-            if (jogoAtual === 'estrelas') iniciarEstrelas();
-        };
-    </script>
+document.addEventListener("DOMContentLoaded", () => {
+  ping();
+  loadBalance();
+  setInterval(ping, 15000);
+});
+</script>
 </body>
 </html>
