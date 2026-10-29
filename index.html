@@ -1,332 +1,298 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>n77.bet · Operações</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eduarda Cardoso - Nails Designer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0b0f14; --panel:#121821; --panel-2:#182231; --line:#233043;
-    --txt:#e6edf3; --muted:#93a1b3; --brand:#3ea6ff; --ok:#22c55e;
-    --warn:#f59e0b; --err:#ef4444; --radius:12px;
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
-  *{box-sizing:border-box}
-  body{margin:0;font:14px/1.5 system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt)}
-  header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;
-         border-bottom:1px solid var(--line);background:var(--panel)}
-  header h1{margin:0;font-size:18px;letter-spacing:.5px}
-  header h1 span{color:var(--brand)}
-  .status{font-size:12px;color:var(--muted)}
-  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--err);margin-right:6px}
-  .dot.up{background:var(--ok)}
-  main{max-width:1100px;margin:24px auto;padding:0 16px;display:grid;gap:20px;
-       grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
-  section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
-  section h2{margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
-  label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
-  input,select{width:100%;padding:9px 10px;background:var(--panel-2);border:1px solid var(--line);
-               border-radius:8px;color:var(--txt);font:inherit}
-  input:focus,select:focus{outline:2px solid var(--brand);outline-offset:0;border-color:transparent}
-  button{margin-top:14px;width:100%;padding:10px 14px;border:0;border-radius:8px;font:inherit;
-         font-weight:600;cursor:pointer;background:var(--brand);color:#04121f}
-  button.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
-  button:hover{opacity:.9}
-  button:disabled{opacity:.45;cursor:not-allowed}
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px}
-  .kv:last-child{border-bottom:0}
-  .kv b{font-weight:600}
-  .big{font-size:26px;font-weight:700;letter-spacing:.3px}
-  .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600}
-  .pill.pending{background:#3b2f10;color:var(--warn)}
-  .pill.approved,.pill.paid{background:#0e2f1c;color:var(--ok)}
-  .pill.failed,.pill.rejected{background:#3a1414;color:var(--err)}
-  pre{background:var(--panel-2);padding:10px;border-radius:8px;font-size:12px;
-      max-height:180px;overflow:auto;white-space:pre-wrap;word-break:break-all;margin:0}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
-  th{color:var(--muted);font-weight:500;font-size:12px}
-  .muted{color:var(--muted);font-size:12px}
-  .actions{display:flex;gap:8px;margin-top:10px}
-  .actions button{margin:0}
-  .toast{position:fixed;right:20px;bottom:20px;padding:12px 16px;border-radius:10px;
-         background:var(--panel-2);border:1px solid var(--line);font-size:13px;
-         transform:translateY(20px);opacity:0;transition:.25s;pointer-events:none}
-  .toast.show{transform:translateY(0);opacity:1}
-  .toast.ok{border-color:var(--ok)} .toast.err{border-color:var(--err)}
+
+  body {
+    background-color: #ffffff;
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+  }
+
+  .container {
+    max-width: 720px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+  }
+
+  .container::before,
+  .container::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  }
+
+  .container::before { top: 0; }
+  .container::after { bottom: 0; }
+
+  .frame {
+    border: 1px solid #d4af37;
+    padding: 60px 40px;
+    position: relative;
+    background: #ffffff;
+    box-shadow: 0 20px 60px rgba(212, 175, 55, 0.08);
+  }
+
+  .frame::before,
+  .frame::after {
+    content: '✦';
+    position: absolute;
+    color: #d4af37;
+    font-size: 18px;
+    background: #ffffff;
+    padding: 0 8px;
+  }
+
+  .frame::before {
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .frame::after {
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .divider-top {
+    color: #d4af37;
+    font-size: 12px;
+    letter-spacing: 8px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+
+  h1 {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(2.8rem, 7vw, 4.5rem);
+    font-weight: 400;
+    background: linear-gradient(135deg, #b8860b 0%, #d4af37 25%, #f4e5a1 50%, #d4af37 75%, #b8860b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.1;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+
+  .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #b8860b, #d4af37, #b8860b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 600;
+    margin-bottom: 30px;
+  }
+
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 30px 0;
+  }
+
+  .ornament::before,
+  .ornament::after {
+    content: '';
+    height: 1px;
+    width: 80px;
+    background: linear-gradient(90deg, transparent, #d4af37);
+  }
+
+  .ornament::after {
+    background: linear-gradient(90deg, #d4af37, transparent);
+  }
+
+  .ornament span {
+    color: #d4af37;
+    font-size: 20px;
+  }
+
+  .info-section {
+    margin: 25px 0;
+  }
+
+  .info-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #d4af37;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .info-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    color: #b8860b;
+    letter-spacing: 1px;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  .location-block {
+    margin: 35px 0;
+  }
+
+  .phone-section {
+    margin: 35px 0;
+  }
+
+  .phone-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+    align-items: center;
+  }
+
+  .phone-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 24px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.03), rgba(212, 175, 55, 0.08));
+  }
+
+  .phone-item:hover {
+    border-color: #d4af37;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.15);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(212, 175, 55, 0.15));
+  }
+
+  .phone-icon {
+    color: #d4af37;
+    font-size: 14px;
+  }
+
+  .phone-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #b8860b, #d4af37, #b8860b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .services {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(212, 175, 55, 0.25);
+  }
+
+  .services-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+    font-style: italic;
+    color: #b8860b;
+    letter-spacing: 1.5px;
+    line-height: 1.8;
+    font-weight: 500;
+  }
+
+  .services-text strong {
+    color: #d4af37;
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  @media (max-width: 500px) {
+    .frame {
+      padding: 45px 22px;
+    }
+    .ornament::before,
+    .ornament::after {
+      width: 40px;
+    }
+  }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>n77<span>.bet</span> · operações</h1>
-  <div class="status"><span id="dot" class="dot"></span><span id="statusTxt">verificando API…</span></div>
-</header>
+  <div class="container">
+    <div class="frame">
+      <div class="divider-top">✦ ✦ ✦</div>
 
-<main>
+      <h1>Eduarda Cardoso</h1>
+      <div class="subtitle">Nails Designer</div>
 
-  <!-- CARTEIRA -->
-  <section>
-    <h2>Carteira</h2>
-    <label>Usuário (ID)</label>
-    <input id="userId" type="number" value="1" min="1" />
-    <div class="actions">
-      <button class="ghost" onclick="loadBalance()">Consultar saldo</button>
-    </div>
-    <div style="margin-top:16px">
-      <div class="muted">Saldo disponível</div>
-      <div class="big" id="balance">—</div>
-    </div>
-    <div class="kv"><span>Em retenção (saques)</span><b id="hold">—</b></div>
-  </section>
+      <div class="ornament"><span>✦</span></div>
 
-  <!-- DEPÓSITO -->
-  <section>
-    <h2>Depósito Pix</h2>
-    <label>Valor (centavos)</label>
-    <input id="depAmt" type="number" value="5000" min="100" step="100" />
-    <label>Usuário (ID)</label>
-    <input id="depUser" type="number" value="1" min="1" />
-    <button onclick="deposit()">Gerar cobrança Pix</button>
-    <div id="depOut" style="margin-top:14px"></div>
-  </section>
-
-  <!-- SAQUE -->
-  <section>
-    <h2>Solicitar saque</h2>
-    <label>Valor (centavos)</label>
-    <input id="wdAmt" type="number" value="2000" min="100" step="100" />
-    <label>Chave Pix</label>
-    <input id="wdKey" type="text" placeholder="email, CPF, telefone ou aleatória" />
-    <label>Usuário (ID)</label>
-    <input id="wdUser" type="number" value="1" min="1" />
-    <button onclick="withdraw()">Solicitar saque</button>
-    <div id="wdOut" style="margin-top:14px"></div>
-  </section>
-
-  <!-- ADMIN -->
-  <section>
-    <h2>Backoffice · aprovar saque</h2>
-    <label>Token admin</label>
-    <input id="adminTok" type="text" value="dev-admin" />
-    <label>ID externo do saque</label>
-    <input id="payoutId" type="text" placeholder="cole o externalId retornado no saque" />
-    <button onclick="approve()">Aprovar saque</button>
-    <div id="appOut" style="margin-top:14px"></div>
-  </section>
-
-  <!-- WEBHOOK -->
-  <section style="grid-column:1/-1">
-    <h2>Simular webhook Pix pago</h2>
-    <p class="muted">Envia um evento assinado com HMAC-SHA256 para <code>/webhooks/psp/pix</code>.
-       Útil para conciliar um depósito pendente. Precisa do <code>chargeId</code> retornado no depósito.</p>
-    <div class="row">
-      <div>
-        <label>eventId</label>
-        <input id="whEvt" type="text" value="evt_demo_1" />
+      <div class="location-block">
+        <div class="info-label">Localização</div>
+        <div class="info-text">
+          Getulina — SP<br>
+          Júlio Prestes, 235
+        </div>
       </div>
-      <div>
-        <label>chargeId (psp_)</label>
-        <input id="whCharge" type="text" placeholder="psp_..." />
+
+      <div class="ornament"><span>❦</span></div>
+
+      <div class="phone-section">
+        <div class="info-label">Contato</div>
+        <div class="phone-list">
+          <a href="tel:+5514996204750" class="phone-item">
+            <span class="phone-icon">✆</span>
+            <span class="phone-number">(14) 99620-4750</span>
+          </a>
+          <a href="tel:+5514996548850" class="phone-item">
+            <span class="phone-icon">✆</span>
+            <span class="phone-number">(14) 99654-8850</span>
+          </a>
+          <a href="tel:+5514991147242" class="phone-item">
+            <span class="phone-icon">✆</span>
+            <span class="phone-number">(14) 99114-7242</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="ornament"><span>✦</span></div>
+
+      <div class="services">
+        <div class="info-label">Especialidades</div>
+        <div class="services-text">
+          Especialista em <strong>unhas</strong>, <strong>cílios</strong>,<br>
+          <strong>pedicure</strong> e <strong>manicure</strong>
+        </div>
       </div>
     </div>
-    <label>Segredo HMAC</label>
-    <input id="whSecret" type="text" value="dev-secret" />
-    <button onclick="sendWebhook()">Enviar webhook</button>
-    <div id="whOut" style="margin-top:14px"></div>
-  </section>
+  </div>
 
-  <!-- AUDITORIA -->
-  <section style="grid-column:1/-1">
-    <h2>Trilha local (nesta sessão)</h2>
-    <table>
-      <thead><tr><th>Hora</th><th>Ação</th><th>Referência</th><th>Resultado</th></tr></thead>
-      <tbody id="log"><tr><td colspan="4" class="muted">Nenhuma ação ainda.</td></tr></tbody>
-    </table>
-  </section>
-
-</main>
-
-<div id="toast" class="toast"></div>
-
-<script>
-const API = "http://localhost:8080";
-const $ = (id) => document.getElementById(id);
-
-function toast(msg, kind = "ok") {
-  const t = $("toast");
-  t.textContent = msg;
-  t.className = "toast show " + kind;
-  clearTimeout(t._t);
-  t._t = setTimeout(() => (t.className = "toast"), 2600);
-}
-
-function log(action, ref, result) {
-  const tb = $("log");
-  if (tb.querySelector(".muted")) tb.innerHTML = "";
-  const tr = document.createElement("tr");
-  const now = new Date().toLocaleTimeString();
-  tr.innerHTML = `<td>${now}</td><td>${action}</td><td>${ref}</td><td>${result}</td>`;
-  tb.prepend(tr);
-}
-
-function money(cents) {
-  if (cents == null) return "—";
-  return (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
-
-async function api(path, opts = {}) {
-  const res = await fetch(API + path, {
-    ...opts,
-    headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
-  });
-  const text = await res.text();
-  let body = null;
-  try { body = text ? JSON.parse(text) : null; } catch { body = { raw: text }; }
-  if (!res.ok) throw new Error((body && body.error) || `HTTP ${res.status}`);
-  return body;
-}
-
-async function ping() {
-  try {
-    await api("/health");
-    $("dot").classList.add("up");
-    $("statusTxt").textContent = "API online · " + API;
-  } catch {
-    $("dot").classList.remove("up");
-    $("statusTxt").textContent = "API offline · " + API;
-  }
-}
-
-async function loadBalance() {
-  const uid = $("userId").value;
-  try {
-    const b = await api(`/wallet/balance?userId=${encodeURIComponent(uid)}`);
-    $("balance").textContent = money(b.balanceCents);
-    $("hold").textContent = "—"; // backend não expõe retenção ainda
-    log("consultar saldo", "user:" + uid, money(b.balanceCents));
-  } catch (e) {
-    toast(e.message, "err");
-    log("consultar saldo", "user:" + uid, "erro: " + e.message);
-  }
-}
-
-async function deposit() {
-  const payload = {
-    userId: Number($("depUser").value),
-    amountCents: Number($("depAmt").value),
-  };
-  try {
-    const c = await api("/wallet/pix/deposit", { method: "POST", body: JSON.stringify(payload) });
-    $("depOut").innerHTML = `
-      <div class="kv"><span>Status</span><b><span class="pill ${c.status}">${c.status}</span></b></div>
-      <div class="kv"><span>externalId</span><b>${c.externalId}</b></div>
-      <div class="kv"><span>chargeId</span><b>${c.chargeId}</b></div>
-      <div class="kv"><span>Valor</span><b>${money(c.amountCents)}</b></div>
-      <div class="muted" style="margin-top:8px">Pix copia-e-cola</div>
-      <pre>${c.qrCode}</pre>
-      <button class="ghost" onclick="prefillWebhook('${c.chargeId}')">Usar este chargeId no webhook</button>`;
-    $("whCharge").value = c.chargeId;
-    log("depósito criado", c.externalId, c.status);
-    toast("Cobrança Pix criada");
-  } catch (e) {
-    toast(e.message, "err");
-    log("depósito criado", "user:" + payload.userId, "erro: " + e.message);
-  }
-}
-
-function prefillWebhook(chargeId) {
-  $("whCharge").value = chargeId;
-  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-}
-
-async function withdraw() {
-  const payload = {
-    userId: Number($("wdUser").value),
-    amountCents: Number($("wdAmt").value),
-    pixKey: $("wdKey").value.trim(),
-  };
-  if (!payload.pixKey) return toast("Informe a chave Pix", "err");
-  try {
-    const p = await api("/wallet/pix/withdraw", { method: "POST", body: JSON.stringify(payload) });
-    $("wdOut").innerHTML = `
-      <div class="kv"><span>Status</span><b><span class="pill ${p.status}">${p.status}</span></b></div>
-      <div class="kv"><span>externalId</span><b>${p.externalId}</b></div>
-      <div class="kv"><span>Valor</span><b>${money(p.amountCents)}</b></div>`;
-    $("payoutId").value = p.externalId;
-    log("saque solicitado", p.externalId, p.status);
-    toast("Saque enviado para revisão");
-  } catch (e) {
-    toast(e.message, "err");
-    log("saque solicitado", "user:" + payload.userId, "erro: " + e.message);
-  }
-}
-
-async function approve() {
-  const externalId = $("payoutId").value.trim();
-  if (!externalId) return toast("Informe o externalId do saque", "err");
-  try {
-    const p = await api("/admin/withdrawals/approve", {
-      method: "POST",
-      headers: { "X-Admin-Token": $("adminTok").value.trim() },
-      body: JSON.stringify({ externalId }),
-    });
-    $("appOut").innerHTML = `
-      <div class="kv"><span>Status</span><b><span class="pill ${p.status}">${p.status}</span></b></div>
-      <div class="kv"><span>Valor</span><b>${money(p.amountCents)}</b></div>`;
-    log("saque aprovado", p.externalId, p.status);
-    toast("Saque aprovado");
-  } catch (e) {
-    toast(e.message, "err");
-    log("saque aprovado", externalId, "erro: " + e.message);
-  }
-}
-
-async function hmacHex(secret, text) {
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    "raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
-  );
-  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(text));
-  return [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-async function sendWebhook() {
-  const eventId = $("whEvt").value.trim();
-  const chargeId = $("whCharge").value.trim();
-  const secret = $("whSecret").value;
-  if (!eventId || !chargeId) return toast("Informe eventId e chargeId", "err");
-
-  // Backend espera o campo "data.chargeId" e um "chargeId" achatado no corpo.
-  const body = JSON.stringify({
-    id: eventId, type: "pix.paid", chargeId,
-    data: { chargeId }
-  });
-  const sig = await hmacHex(secret, body);
-
-  try {
-    const res = await fetch(API + "/webhooks/psp/pix", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Signature": sig },
-      body,
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || "HTTP " + res.status);
-    $("whOut").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-    log("webhook pix.paid", eventId, data.idempotent ? "idempotente" : "processado");
-    toast("Webhook aceito");
-    loadBalance();
-  } catch (e) {
-    toast(e.message, "err");
-    log("webhook pix.paid", eventId, "erro: " + e.message);
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  ping();
-  loadBalance();
-  setInterval(ping, 15000);
-});
-</script>
 </body>
 </html>
